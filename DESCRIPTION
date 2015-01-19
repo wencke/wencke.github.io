@@ -1,0 +1,18 @@
+Package: GOplot
+Type: Package
+Title: Visualization of functional analysis data
+Version: 1.0
+Date: 2015-01-12
+Author: Wencke Walter <wencke.walter@arcor.de>
+Maintainer: Wencke Walter <wencke.walter@arcor.de>
+Description: GOplot is based on the ggplot2 package and allows for enhanced graphical representation. The package 
+             takes the output of any general enrichment analysis and generates plots at different levels of detail: 
+             from a general overview to identify the most enriched categories (bar plot, bubble plot) to a more detailed 
+             one displaying different types of relevant information for the genes in a given set of categories (circle plot,
+             chord plot, cluster plot).
+Depends: ggplot2, ggdendro, RColorBrewer, gridExtra, R (>= 3.0.3)
+License: GPL-2
+Suggests: knitr
+VignetteBuilder: knitr
+LazyData: TRUE
+Packaged: 2015-01-19 13:05:04 UTC; wwalter
