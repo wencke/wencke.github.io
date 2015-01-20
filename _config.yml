@@ -1,31 +1,62 @@
-safe: false
-baseurl: /
+# Where things are
 source: .
 destination: ./_site
 plugins: ./_plugins
+layouts: ./_layouts
+data_source: ./_data
+collections: null
+
+# Handling Reading
+safe: false
+include: [".htaccess"]
+exclude: []
+keep_files: [".git", ".svn"]
+encoding: "utf-8"
+markdown_ext: "markdown, mkdown, mkdn, mkd, md"
+textile_ext: "textile"
+
+# Filtering Content
+show_drafts: null
+limit_posts: 0
 future: true
+unpublished: false
+
+# Plugins
+whitelist: []
+gems: []
+
+#Conversion
+markdown: kramdown
 lsi: false
-pygments: false
-markdown: maruku
-permalink: /posts/:year-:month-:day/:title.html
+highlighter: pygments
+
+# Serving
+baseurl: ""
+
+# Outputting
+permalink: date
 name: Wencke.Walter.org Blog
 description: Blog about R, bioinformatics, data visualization, and other stuff
 url: http://wencke.walter.org
-markdown_ext: markdown
+
+# Markdown Processor
 maruku:
 use_tex: false
 use_divs: false
 png_engine: blahtex
 png_dir: images/latex
 png_url: /images/latex
+
 rdiscount:
 extensions: []
+
 kramdown:
 auto_ids: true,
 footnote_nr: 1
 entity_output: as_char
 toc_levels: 1..6
 use_coderay: false
+
 coderay:
 coderay_wrap: div
 coderay_line_numbers: inline

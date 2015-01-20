@@ -1,8 +1,12 @@
 ---
-layout: post
-title: Blogging like a hacker
+title: GOplot_1.0
+author: Wencke Walter
+date: "2015-01-20"
 status: publish
 published: true
+output: 
+  rmarkdown::html_vignette:
+    css: GOplot.css
 ---
  
 A manual to exploit the possibilities and limitations of the R package GOplot.
@@ -36,12 +40,38 @@ As a first step we want to get an overview of the enriched GO terms of our diffe
     # Get a glimpse of the data format of the results of the functional analysis... 
     head(EC$david)
 
-    ## Error in head(EC$david): object 'EC' not found
+    ##   Category         ID                             Term
+    ## 1       BP GO:0007507                heart development
+    ## 2       BP GO:0001944          vasculature development
+    ## 3       BP GO:0001568         blood vessel development
+    ## 4       BP GO:0048729             tissue morphogenesis
+    ## 5       BP GO:0048514       blood vessel morphogenesis
+    ## 6       BP GO:0051336 regulation of hydrolase activity
+    ##                                                                                                                                                                                                                                                                                                                                                                              Genes
+    ## 1       DLC1, NRP2, NRP1, EDN1, PDLIM3, GJA1, TTN, GJA5, ZIC3, TGFB2, CERKL, GATA6, COL4A3BP, GAB1, SEMA3C, MKL2, SLC22A5, MB, PTPRJ, RXRA, VANGL2, MYH6, TNNT2, HHEX, MURC, MIB1, FOXC2, FOXC1, ADAM19, MYL2, TCAP, EGLN1, SOX9, ITGB1, CHD7, HEXIM1, PKD2, NFATC4, PCSK5, ACTC1, TGFBR2, NF1, HSPG2, SMAD3, TBX1, TNNI3, CSRP3, FOXP1, KCNJ8, PLN, TSC2, ATP6V0A1, TGFBR3, HDAC9
+    ## 2 GNA13, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, FOXO1, GJA5, TGFB2, WARS, CERKL, APOE, CXCR4, ANG, SEMA3C, NOS2, MKL2, FGF2, RAPGEF1, PTPRJ, RECK, EFNB2, VASH1, PNPLA6, THY1, MIB1, NUS1, FOXC2, FOXC1, CAV1, CDH2, MEIS1, WT1, CDH5, PTK2, FBXW8, CHD7, PLCD1, PLXND1, FIGF, PPAP2B, MAP2K1, TBX4, TGFBR2, NF1, TBX1, TNNI3, LAMA4, MEOX2, ECSCR, HBEGF, AMOT, TGFBR3, HDAC7
+    ## 3        GNA13, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, FOXO1, GJA5, TGFB2, WARS, CERKL, APOE, CXCR4, ANG, SEMA3C, NOS2, MKL2, FGF2, RAPGEF1, PTPRJ, RECK, VASH1, PNPLA6, THY1, MIB1, NUS1, FOXC2, FOXC1, CAV1, CDH2, MEIS1, WT1, CDH5, PTK2, FBXW8, CHD7, PLCD1, PLXND1, FIGF, PPAP2B, MAP2K1, TBX4, TGFBR2, NF1, TBX1, TNNI3, LAMA4, MEOX2, ECSCR, HBEGF, AMOT, TGFBR3, HDAC7
+    ## 4                                   DLC1, ENAH, NRP1, PGF, ZIC2, TGFB2, CD44, ILK, SEMA3C, RET, AR, RXRA, VANGL2, LEF1, TNNT2, HHEX, MIB1, NCOA3, FOXC2, FOXC1, TGFB1I1, WNT5A, COBL, BBS4, FGFR3, TNC, BMPR2, CTNND1, EGLN1, NR3C1, SOX9, TCF7L1, IGF1R, FOXQ1, MACF1, HOXA5, BCL2, PLXND1, CAR2, ACTC1, TBX4, SMAD3, FZD3, SHANK3, FZD6, HOXB4, FREM2, TSC2, ZIC5, TGFBR3, APAF1
+    ## 5                                                                                            GNA13, CAV1, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, CDH2, MEIS1, WT1, TGFB2, WARS, PTK2, CERKL, APOE, CXCR4, ANG, SEMA3C, PLCD1, NOS2, MKL2, PLXND1, FIGF, FGF2, PTPRJ, TGFBR2, TBX4, NF1, TBX1, TNNI3, PNPLA6, VASH1, THY1, NUS1, MEOX2, ECSCR, AMOT, HBEGF, FOXC2, FOXC1, HDAC7
+    ## 6                                                                               CAV1, XIAP, AGFG1, ADORA2A, TNNC1, TBC1D9, LEPR, ABHD5, EDN1, ASAP2, ASAP3, SMAP1, TBC1D12, ANG, TBC1D14, MTCH1, TBC1D13, TBC1D4, TBC1D30, DHCR24, HIP1, VAV3, NOS1, NF1, MYH6, RICTOR, TBC1D22A, THY1, PLCE1, RNF7, NDEL1, CHML, IFT57, ACAP2, TSC2, ERN1, APAF1, ARAP3, ARAP2, ARAP1, HTR2A, F2R
+    ##      adj_pval
+    ## 1 0.000002170
+    ## 2 0.000010400
+    ## 3 0.000007620
+    ## 4 0.000119000
+    ## 5 0.000720000
+    ## 6 0.001171166
 
     # ...and of the data frame of selected genes
     head(EC$genelist)
 
-    ## Error in head(EC$genelist): object 'EC' not found
+    ##        ID    logFC   AveExpr        t  P.Value adj.P.Val        B
+    ## 1 Slco1a4 6.645388 1.2168670 88.65515 1.32e-18  2.73e-14 29.02715
+    ## 2 Slc19a3 6.281525 1.1600468 69.95094 2.41e-17  2.49e-13 27.62917
+    ## 3     Ddc 4.483338 0.8365231 65.57836 5.31e-17  3.65e-13 27.18476
+    ## 4 Slco1c1 6.469384 1.3558865 59.87613 1.62e-16  8.34e-13 26.51242
+    ## 5  Sema3c 5.515630 2.3252117 58.53141 2.14e-16  8.81e-13 26.33626
+    ## 6 Slc38a3 4.761755 0.9218670 54.11559 5.58e-16  1.76e-12 25.70308
  
 Now, that we know what the input data looks like it's time to use the *cirlce_dat* function to create the plotting object.
  
@@ -154,12 +184,21 @@ Based on the **[Circos](http://circos.ca/)** plots designed by *[Martin Krzywins
     # sample contains the data frame of selected genes and their logFC. Have a look...
     head(EC$genes)
 
-    ## Error in head(EC$genes): object 'EC' not found
+    ##      ID      logFC
+    ## 1  PTK2 -0.6527904
+    ## 2 GNA13  0.3711599
+    ## 3  LEPR  2.6539788
+    ## 4  APOE  0.8698346
+    ## 5 CXCR4 -2.5647537
+    ## 6  RECK  3.6926860
 
     # Since we have a lot of significantly enriched processes we selected some specific ones (EC$process)
     EC$process
 
-    ## Error in eval(expr, envir, enclos): object 'EC' not found
+    ## [1] "heart development"        "phosphorylation"         
+    ## [3] "vasculature development"  "blood vessel development"
+    ## [5] "tissue morphogenesis"     "cell adhesion"           
+    ## [7] "plasma membrane"
 
     # Now it is time to generate the binary matrix
     chord <- chord_dat(circ, EC$genes, EC$process)
