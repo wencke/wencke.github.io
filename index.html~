@@ -232,6 +232,22 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(circ, EC$g
 <p>The <em>space</em> argument defines the space between the colored rectangles representing the logFC. Also the font size of the gene labels (<em>gene.size</em>) and the space (<em>gene.space</em>) between them was changed. The genes were ordered according
  to their logFC values setting <em>gene.order</em> to &#8216;logFC&#8217;.</p>
 </div>
+<div id="venn-diagram-govenn" class="section level3">
+<h3>Venn diagram (GOVenn)</h3>
+<p>In this biological context we implemented a Venn diagram that can be used to detect relations between various lists of differentially expressed genes or to explore the intersection of genes of multiple terms from the functional analysis. The Venn diagram
+ does not only display the number of overlap genes, but it also displays the information about the gene expression patterns (commonly up- regulated, commonly down- regulated or contra- regulated). At the moment, maximal three datasets are aloud as an input.
+ The input data frame contains at least two columns: one for the gene names and one for the logFC value.</p>
+<pre class="sourceCode r"><code class="sourceCode r">l1 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'heart development'</span>, <span class="kw">c</span>(genes,logFC))
+l2 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'plasma membrane'</span>, <span class="kw">c</span>(genes,logFC))
+l3 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'tissue morphogenesis'</span>, <span class="kw">c</span>(genes,logFC))
+<span class="kw">GOVenn</span>(l1,l2,l3, <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">'heart development'</span>, <span class="st">'plasma membrane'</span>, <span class="st">'tissue morphogenesis'</span>))</code></pre>
+<p><img src="/images/GOVenn.png" /></p>
+<p>For example, heart development and tissue morphogenesis share a set of 22 genes, whereas 5 are commonly up-regulated and 17 are commonly down-regulated. The important thing to notice is, that the pie charts don&#8217;t display redundant information. Thus, if you
+ compare three datasets the genes which are shared by all datasets (pie chart in the middle) are not included in the other pie charts. The following
+<a href="https://wwalter.shinyapps.io/Venn/">
+link</a> refers to the shinyapp of this tool. The web tool is slightly more interactive since the circles are area-proportional to the number of genes of the dataset and the small pie charts can be moved with sliders. It has also all the other options of the
+<em>GOVenn</em> function to change the layout of the plot. You can easily download the picture and gene lists.</p>
+</div>
 <div id="golden-eye-gocluster" class="section level3">
 <h3>Golden eye (GOCluster)</h3>
 <p>So far, the last plotting function of the package is the <em>GOCluster</em> function. The idea behind this is to visualize as much information as possible. Here is an example:</p>
@@ -250,22 +266,6 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(circ, EC$g
 <em>clust.by</em>. It expects a character vector specifying if the clustering should be done for gene expression pattern (&#8216;logFC&#8217;, as in the figure above) or functional categories (&#8216;terms&#8217;).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GOCluster</span>(circ, EC$process, <span class="dt">clust.by =</span> <span class="st">'term'</span>, <span class="dt">lfc.col =</span> <span class="kw">c</span>(<span class="st">'darkgoldenrod1'</span>, <span class="st">'black'</span>, <span class="st">'cyan1'</span>))</code></pre>
 <p><img src="/images/GOCluster2.png" /></p>
-</div>
-<div id="venn-diagram-govenn" class="section level3">
-<h3>Venn diagram (GOVenn)</h3>
-<p>In this biological context we implemented a Venn diagram that can be used to detect relations between various lists of differentially expressed genes or to explore the intersection of genes of multiple terms from the functional analysis. The Venn diagram
- does not only display the number of overlap genes, but it also displays the information about the gene expression patterns (commonly up- regulated, commonly down- regulated or contra- regulated). At the moment, maximal three datasets are aloud as an input.
- The input data frame contains at least two columns: one for the gene names and one for the logFC value.</p>
-<pre class="sourceCode r"><code class="sourceCode r">l1 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'heart development'</span>, <span class="kw">c</span>(genes,logFC))
-l2 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'plasma membrane'</span>, <span class="kw">c</span>(genes,logFC))
-l3 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'tissue morphogenesis'</span>, <span class="kw">c</span>(genes,logFC))
-<span class="kw">GOVenn</span>(l1,l2,l3, <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">'heart development'</span>, <span class="st">'plasma membrane'</span>, <span class="st">'tissue morphogenesis'</span>))</code></pre>
-<p><img src="/images/GOVenn.png" /></p>
-<p>For example, heart development and tissue morphogenesis share a set of 22 genes, whereas 5 are commonly up-regulated and 17 are commonly down-regulated. The important thing to notice is, that the pie charts don&#8217;t display redundant information. Thus, if you
- compare three datasets the genes which are shared by all datasets (pie chart in the middle) are not included in the other pie charts. The following
-<a href="https://wwalter.shinyapps.io/Venn/">
-link</a> refers to the shinyapp of this tool. The web tool is slightly more interactive since the circles are area-proportional to the number of genes of the dataset and the small pie charts can be moved with sliders. It has also all the other options of the
-<em>GOVenn</em> function to change the layout of the plot. You can easily download the picture and gene lists.</p>
 </div>
 </div>
 </body>
