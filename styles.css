@@ -38,7 +38,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color:#232323;
+  color:#800517;
   margin:36px 0 10px;
 }
 
@@ -82,6 +82,7 @@ a {
 }
 
 a:hover {
+	color:#7D0552;
 	text-decoration: underline;
 }
 
@@ -146,7 +147,7 @@ img {
   max-width: 650px;
   padding: 5px;
   margin: 10px 0 32px 0;
-  border: 1px solid #ccc;
+  border: 1px solid #800517;
 }
 
 
@@ -171,7 +172,7 @@ pre {
 /* Tables */
 
 table {
-  width:100%;
+  width:90%;
 }
 
 table {
@@ -308,7 +309,7 @@ a.buttons:hover {
 /* Section - for main page content */
 
 section {
-  width:650px;
+  width:550px;
   float:right;
   padding-bottom:50px;
 }
