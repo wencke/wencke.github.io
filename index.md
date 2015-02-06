@@ -7,8 +7,6 @@ status: publish
 published: true
 ---
 
-{% include JB/setup %}
- 
 A manual to exploit the possibilities and limitations of the R package GOplot.
  
  
@@ -259,4 +257,4 @@ In this biological context we implemented a Venn diagram that can be used to det
  
 For example, heart development and tissue morphogenesis share a set of 22 genes, whereas 5 are commonly up-regulated and 17 are commonly down-regulated. The important thing to notice is, that the pie charts don't display redundant information. Thus, if you compare three datasets the genes which are shared by all datasets (pie chart in the middle) are not included in the other pie charts. 
 The following [link](https://wwalter.shinyapps.io/Venn/) refers to the shinyapp of this tool. The web tool is slightly more interactive since the circles are area-proportional to the number of genes of the dataset and the small pie charts can be moved with sliders. It has also all the other options of the *GOVenn* function to change the layout of the plot. You can easily download the picture and gene lists.   
-{% include JB/setup %}
+
