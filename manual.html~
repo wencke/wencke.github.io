@@ -1,0 +1,12 @@
+---
+layout: page
+title: Manuals
+header: Manuals for R packages
+group: navigation
+---
+{% include JB/setup %}
+
+<ul>
+{% assign pages_list = array('GOplot.html') %}
+{% include JB/pages_list %}
+</ul>

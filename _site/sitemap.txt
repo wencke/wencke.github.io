@@ -1,0 +1,6 @@
+
+http://wencke.github.io/vignettes/GOplot_vignette.Rmd
+http://wencke.github.io/inst/doc/GOplot_vignette.Rmd
+http://wencke.github.io/index.html
+http://wencke.github.io/rss.xml
+http://wencke.github.io/sitemap.txt

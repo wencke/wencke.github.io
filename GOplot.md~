@@ -1,13 +1,13 @@
 ---
-title: GOplot_1.0
+layout: page
+title: GOplot manual
 author: Wencke Walter
 date: "2015-01-20"
 status: publish
 published: true
-output: 
-  rmarkdown::html_vignette:
-    css: GOplot.css
 ---
+
+{% include JB/setup %}
  
 A manual to exploit the possibilities and limitations of the R package GOplot.
  
@@ -26,15 +26,13 @@ GOplot comes with a manually compiled data set. Selected samples were downloaded
 |EC$david    |Data frame of results from a functional analysis of the differentially expressed genes performed with DAVID |174 x 5   |
 |EC$genes    |Data frame of selected genes with logFC                                                                     |37 x 2    |
 |EC$process  |Character vector of selected enriched biological processes                                                  |7         |
+
  
 ##Getting started
 As a first step we want to get an overview of the enriched GO terms of our differentially expressed genes. But before we start plotting we need to bring the data in the right format for the plotting functions. In general, the data object of the plotting functions can be created manually, but the package includes a function that does the job for you. The *circle_dat* function combines the result of the functional analysis with a list of selected genes and their logFC. Most likely a list of differentially expressed genes. *circle_dat* takes two data frames as an input. The first one contains the results of the functional analysis and should have at least four columns (category, term, genes, adjusted p-value). Additionally, a data frame of the selected genes and their logFC is needed. This data frame can be, for example, the result from a statistical analysis performed with *limma*. Let us have a look at the mentioned data frames.   
  
 
     library(GOplot)
-
-    ## Error in library(GOplot): there is no package called 'GOplot'
-
     # Load the dataset
     data(EC)
     # Get a glimpse of the data format of the results of the functional analysis... 
@@ -73,14 +71,14 @@ As a first step we want to get an overview of the enriched GO terms of our diffe
     ## 5  Sema3c 5.515630 2.3252117 58.53141 2.14e-16  8.81e-13 26.33626
     ## 6 Slc38a3 4.761755 0.9218670 54.11559 5.58e-16  1.76e-12 25.70308
  
+
 Now, that we know what the input data looks like it's time to use the *cirlce_dat* function to create the plotting object.
  
 
     # Generate the plotting object
     circ <- circle_dat(EC$david, EC$genelist)
 
-    ## Error in eval(expr, envir, enclos): could not find function "circle_dat"
- 
+
 The **circ** object has eight columns with the following names: 
  
 * category
@@ -108,19 +106,20 @@ Since we do not really know what to expect from our data the aim of the first fi
     # Generate a simple barplot
     GOBar(subset(circ, category == 'BP'))
 
-    ## Error in eval(expr, envir, enclos): could not find function "GOBar"
- 
+![GOBar](/images/GOBar.png) 
 On the y-axis the significance of the terms is shown and the bars are ordered according to their z-score. If you want, you can change the order by setting the argument *order.by.zscore* to FALSE. In this case the bars are ordered based on their significance. Additionally, the barplot can be easily faceted according to the categories of the terms using the argument *display* of the plotting function (output not shown).
  
 
     # Facet the barplot according to the categories of the terms 
     GOBar(circ, display = 'multiple')
+
  
 To add a title use *title* and to change the color scale of the z-score use the argument *zsc.col* (output not shown).
  
 
     # Facet the barplot, add a title and change the color scale for the z-score
     GOBar(circ, display = 'multiple', title = 'Z-score colored barplot', zsc.col = c('yellow', 'black', 'cyan'))
+
  
 Barplots are common and very easy to read, but they might not be the absolute solution. Another possibility to display an overview for high- dimensional data is the bubble plot. 
  
@@ -128,25 +127,18 @@ Barplots are common and very easy to read, but they might not be the absolute so
 The bubble plot is another possibility to get an overview of the enriched terms. The z-score is assigned to the x-axis and the negative logarithm of the adjusted p-value to the y-axis, as in the barplot (the higher the more significant). The area of the displayed circles is proportional to the number of genes (circ$count) assigned to the term and the color corresponds to the category.
 The help page of the plotting function (?GOBubble) lists all the arguments to change the layout of the plot. As a default the circles are labeled with the term ID. Therefore, a table connecting the IDs and terms is displayed on the right side by default. You can hide it by setting the argument *table.legend* to FALSE. If you want to display the term description instead set the argument *ID* to FALSE. Not all the circles are labeld due to the limited space and the overlap of the circles. A threshold for the labeling is set (default=5) based on the negative logarithm of the adjusted p-value.
  
- 
 
     # Generate the bubble plot with a label threshold of 3
     GOBubble(circ, labels = 3)
-
-    ## Error in eval(expr, envir, enclos): could not find function "GOBubble"
  
-![GOBubble1.](GOBubble1.png)
- 
+![GOBubble1](/images/GOBubble1.png)
 To add a title, change the color of the circles, facet the plot and to change the label threshold use the following arguments:
  
 
     # Add a title, change the color of the circles, facet the plot according to the categories and change the label threshold
     GOBubble(circ, title = 'Bubble plot', color = c('deeppink', 'blue', 'chartreuse1'), display = 'multiple', labels = 3)
 
-    ## Error in eval(expr, envir, enclos): could not find function "GOBubble"
- 
-![GOBubble2.](GOBubble2.png)
- 
+![GOBubble2.](/images/GOBubble2.png)
 After this basic level of visualization the next figures will be more specific and concentrated on the terms of interest.  
  
 ### Circular visualization of the results of gene- annotation enrichment analysis (GOCircle)
@@ -156,9 +148,7 @@ The overview plots shall help to decide which of the terms are the most interest
     # Generate a circular visualization of the results of gene- annotation enrichment analysis
     GOCircle(circ)
 
-    ## Error in eval(expr, envir, enclos): could not find function "GOCircle"
- 
-![Circle plot.](GOCirc.png)
+![Circle plot.](/images/GOCirc.png)
  
 The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colors can be changed with the argument *lfc.col*. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. 
 You can change the layout of the plot with various arguments, see ?GOCirlce.The *nsub* argument needs a little bit more explanation to be used wisely. First of all, it can be a numeric or a character vector. If it is a character vector then it contains the IDs or term descriptions of the processes you want to display (output not shown).
@@ -167,12 +157,14 @@ You can change the layout of the plot with various arguments, see ?GOCirlce.The 
     # Generate a circular visualization of selected terms
     IDs <- c('GO:0007507', 'GO:0001568', 'GO:0001944', 'GO:0048729', 'GO:0048514', 'GO:0005886', 'GO:0008092', 'GO:0008047')
     GOCircle(circ, nsub = IDs)
+
  
 If *nsub* is a numeric vector then the number defines how many terms are displayed. It starts with the first row of the input data frame (output not shown).
  
 
     # Generate a circular visualization for 10 terms
     GOCircle(circ, nsub = 10)
+
  
 This kind of visualization is only useful for a smaller set of terms. The maximum number of terms lies around 12. While the number of terms decreases the amount of displayed information increases. 
  
@@ -182,8 +174,8 @@ Based on the **[Circos](http://circos.ca/)** plots designed by *[Martin Krzywins
 
     # Define a list of genes which you think are interesting to look at. The item EC$genes of the toy 
     # sample contains the data frame of selected genes and their logFC. Have a look...
-    head(EC$genes)
 
+    head(EC$genes)
     ##      ID      logFC
     ## 1  PTK2 -0.6527904
     ## 2 GNA13  0.3711599
@@ -193,77 +185,78 @@ Based on the **[Circos](http://circos.ca/)** plots designed by *[Martin Krzywins
     ## 6  RECK  3.6926860
 
     # Since we have a lot of significantly enriched processes we selected some specific ones (EC$process)
-    EC$process
 
+    EC$process
     ## [1] "heart development"        "phosphorylation"         
     ## [3] "vasculature development"  "blood vessel development"
     ## [5] "tissue morphogenesis"     "cell adhesion"           
     ## [7] "plasma membrane"
 
     # Now it is time to generate the binary matrix
-    chord <- chord_dat(circ, EC$genes, EC$process)
 
-    ## Error in eval(expr, envir, enclos): could not find function "chord_dat"
+    chord <- chord_dat(circ, EC$genes, EC$process)
 
     head(chord)
 
-    ## Error in head(chord): object 'chord' not found
  
 Rows are genes and columns are terms. A '0' indicates that the gene is not assigned to the term; a '1' the opposite. As mentioned before it is possible to leave either the *genes* or the *process* argument out. If you pass on the *process* argument the binary matrix is build for the list of selected genes and all the processes with at least one assigned gene. On the other hand, if you just provide a set of processes without limiting the list of genes, the binary matrix is generated for all the genes which are assigned to at least one of the processes from your list (output not shown).
  
 
     # Generate the matrix with a list of selected genes
+
     chord <- chord_dat(data = circ, genes = EC$genes)
+
     # Generate the matrix with selected processes
+
     chord <- chord_dat(data = circ, process = EC$process)
  
 Be aware that a pass on either *genes* or *process* might lead to a large binary matrix which results in a confusing visualization. The chart was designed for smaller subsets of high-dimensional data.
 Like the other plotting functions *GOChord* provides the user with a lot of arguments to change the layout of the plot, see ?GOChord. Most of the arguments address the adjustment of the font size of the labels, the space between them, the color scale for the logFC and the color of the ribbons. Despite the asthetics there are two other arguments: *gene.order* and *nlfc*. The first argument defines the order of the genes with the three possible options: 'logFC', 'alphabetical', 'none'. Actually the options are quite self- explanatory. Sometimes you are performing the differential expression analysis for multiple conditions and/or batches. Therefore, you want to include more than one logFC value per gene. To adjust to this situation you should use the *nlfc* argument. It is a numeric value and it defines the number of logFC columns within your binary membership matrix. The default is '1' assuming that most of the time you just have one contrast and one logFC value per gene.       
  
- 
 
     # Create the plot
+
     GOChord(chord, space = 0.02, gene.order = 'logFC', gene.space = 0.25, gene.size = 5)
 
-    ## Error in eval(expr, envir, enclos): could not find function "GOChord"
-![Chord1.](GOChord1.png)
+![Chord1.](/images/GOChord1.png)
  
 The *space* argument defines the space between the colored rectangles representing the logFC. Also the font size of the gene labels (*gene.size*) and the space (*gene.space*) between them was changed. The genes were ordered according to their logFC values setting *gene.order* to 'logFC'.
  
 ### Golden eye (GOCluster)
 So far, the last plotting function of the package is the *GOCluster* function. The idea behind this is to visualize as much information as possible. Here is an example:
- 
+
+
+    # Create directly the plot
 
     GOCluster(circ, EC$process, clust.by = 'logFC', term.width = 2)
-![GOCluster.](GOCluster.png)
+
+![GOCluster.](/images/GOCluster.png)
  
 Hierarchical clustering is a popular method for gene expression analysis due to its unsupervised nature assuring an unbiased result. Genes are grouped together based on their expression patterns, thus clusters are likely to contain sets of co-regulated or functionally related genes. *GOCluster* performs the hierarchical clustering of the gene expression profiles using the *hclust* method in core R. If you want to change the distance metric or the clustering algorithm use the arguments *metric* and *clust*, respectively. The resulting dendrogram is transformed with the help of *ggdendro* to be suitable for a visualization with *ggplot2*. As before a circular layout was chosen, because it is not only effective but also visually appealing. The first ring next to the dendrogram represents the logFC of the genes, which are actually the leaves of the clustering tree. In case you are interested in more than one contrast the *nlfc* argument is also available for this function. By default it is set to '1', so only one ring is drawn. Like always the logFC values are color- coded with an user- definable color scale (*lfc.col*). The next ring represents the terms assigned to the genes. For aesthetic reasons the terms should be reduced to a reasonable number with the argument *process*. The terms are color- coded as well and you can change the default colors by using the argument *term.col*. Once again, the plotting function provides you with a bunch of arguments to change the layout of the plot and you can check them out on the help page, ?GOCluster. Probably the most important argument of the function is *clust.by*. It expects a character vector specifying if the clustering should be done for gene expression pattern ('logFC', as in the figure above) or functional categories ('terms').        
  
- 
+
+    # Create another GOCluster plot
 
     GOCluster(circ, EC$process, clust.by = 'term', lfc.col = c('darkgoldenrod1', 'black', 'cyan1'))
-![GOCluster2.](GOCluster2.png)
+
+![GOCluster2](/images/GOCluster2.png)
  
 ### Venn diagram (GOVenn)
 In this biological context we implemented a Venn diagram that can be used to detect relations between various lists of differentially expressed genes or to explore the intersection of genes of multiple terms from the functional analysis. The Venn diagram does not only display the number of overlap genes, but it also displays the information about the gene expression patterns (commonly up- regulated, commonly down- regulated or contra- regulated). At the moment, maximal three datasets are aloud as an input. The input data frame contains at least two columns: one for the gene names and one for the logFC value. 
  
 
+    # Select genes and logFC values for specific processes
+
     l1 <- subset(circ, term == 'heart development', c(genes,logFC))
-
-    ## Error in subset(circ, term == "heart development", c(genes, logFC)): object 'circ' not found
-
     l2 <- subset(circ, term == 'plasma membrane', c(genes,logFC))
-
-    ## Error in subset(circ, term == "plasma membrane", c(genes, logFC)): object 'circ' not found
-
     l3 <- subset(circ, term == 'tissue morphogenesis', c(genes,logFC))
 
-    ## Error in subset(circ, term == "tissue morphogenesis", c(genes, logFC)): object 'circ' not found
+    # Create the Venn diagram
 
     GOVenn(l1,l2,l3, label = c('heart development', 'plasma membrane', 'tissue morphogenesis'))
 
-    ## Error in eval(expr, envir, enclos): could not find function "GOVenn"
-![Venn diagram.](GOVenn.png)
+![Venn diagram](/images/GOVenn.png)
  
 For example, heart development and tissue morphogenesis share a set of 22 genes, whereas 5 are commonly up-regulated and 17 are commonly down-regulated. The important thing to notice is, that the pie charts don't display redundant information. Thus, if you compare three datasets the genes which are shared by all datasets (pie chart in the middle) are not included in the other pie charts. 
 The following [link](https://wwalter.shinyapps.io/Venn/) refers to the shinyapp of this tool. The web tool is slightly more interactive since the circles are area-proportional to the number of genes of the dataset and the small pie charts can be moved with sliders. It has also all the other options of the *GOVenn* function to change the layout of the plot. You can easily download the picture and gene lists.   
+{% include JB/setup %}

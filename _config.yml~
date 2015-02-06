@@ -13,7 +13,7 @@ tagline: A blog about R packages, data visualization and other stuff
 author :
   name : Wencke Walter
   github : wencke
-  email : wwalter@cnic.es
+  email : wencke.walter@arcor.de
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
