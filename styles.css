@@ -144,7 +144,7 @@ hr {
 img {
   position: relative;
   margin: 0 auto;
-  max-width: 650px;
+  max-width: 900px;
   padding: 5px;
   margin: 10px 0 32px 0;
   border: 1px solid #800517;
@@ -159,12 +159,12 @@ code, pre {
 }
 
 span.co { 
-	color: #60a0b0; 
+	color: #800517; 
 	font-style: italic; 
 }
 
 span.kw { 
-	color: #007020; 
+	color: #000000; 
 	font-weight: bold; 
 }
 
@@ -182,7 +182,7 @@ pre {
 /* Tables */
 
 table {
-  width:90%;
+  width:80%;
 }
 
 table {
@@ -204,6 +204,27 @@ td {
   padding: 10px;
 	background: #ccc;
  }
+
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+	margin: 0; 
+	padding: 0; 
+	vertical-align: baseline; 
+	border: none; 
+}
+
+table.sourceCode { width: 100%; line-height: 100%; }
+
+td.sourceCode { 
+	padding-left: 5px; 
+}
+
+td.lineNumbers { 
+	text-align: right; 
+	padding-right: 4px; 
+	padding-left: 4px; 
+	color: #aaaaaa; 
+	border-right: 1px solid #aaaaaa; 
+}
 
 
 /* Wrapper */
