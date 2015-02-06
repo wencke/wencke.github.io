@@ -137,7 +137,7 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 <p>Since we do not really know what to expect from our data the aim of the first figure should be to display as many terms as possible without going too much into details. Nevertheless, the figure shall help us to pick the interesting and valuable terms. Therefore, we need to have some parameters to quantify the importance. Since the majority of scientific sampled data is plotted using bar charts a modified version of the normal barplot function, named <em>GOBar</em>, is included. The <em>GOBar</em> function allows the user to quickly create an appealing barplot.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a simple barplot</span>
 <span class="kw">GOBar</span>(<span class="kw">subset</span>(circ, category ==<span class="st"> 'BP'</span>))</code></pre>
-<p><img src="images/GOBubble1.png" /></p>
+<p><img src="images/GOBar.png" /></p>
 <p>On the y-axis the significance of the terms is shown and the bars are ordered according to their z-score. If you want, you can change the order by setting the argument <em>order.by.zscore</em> to FALSE. In this case the bars are ordered based on their significance. Additionally, the barplot can be easily faceted according to the categories of the terms using the argument <em>display</em> of the plotting function (output not shown).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Facet the barplot according to the categories of the terms </span>
 <span class="kw">GOBar</span>(circ, <span class="dt">display =</span> <span class="st">'multiple'</span>)</code></pre>
