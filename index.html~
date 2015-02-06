@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Fatima Sanchez Cabo &amp; Wencke Walter" />
+
+<meta name="date" content="2015-02-06" />
+
+<title>GOplot 1.0</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="styles.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">GOplot</h1>
+<h4 class="author"><em>Wencke Walter</em></h4>
+<h4 class="date"><em>2015-02-06</em></h4>
+</div>
+
+
+<p>A manual to exploit the possibilities and limitations of the R package GOplot.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The GOplot package concentrates on the visualization of biological data. More precisely, the package will help combine and integrate expression data with the results of a functional analysis. The package cannot be used to perform any of these analyses. It is for visualization purpose only. In all the scientific fields we visualize information to meet a basic need- to tell a story. Attributable to space restrictions and a general need to present everything neat and tidy most of the times it is simply not possible to actually tell a story. Therefore, we use vision to communicate information. A well designed and elaborated figure provides the beholder with high-dimensional information in a much smaller space than for example a table. The idea of the package is to provide the user with functions that allow a quick examination of large amounts of data, expose trends and find patterns &amp; correlations within the data. Effective data visualization is an important tool in the decision making process and helps to find further pieces of the puzzle picturing the answer of your biological question. Based on that you will be able to confirm or falsify your hypotheses. You might even start to look in a different direction to investigate your topic relying on the insight a new visualization provides. The plotting functions of the package were developed with a hierarchical structure in mind; starting with a general overview and closing with definite subsets of selected genes and terms. To explain the idea let us use an example.</p>
+</div>
+<div id="the-toy-example" class="section level2">
+<h2>The toy example</h2>
+<p>GOplot comes with a manually compiled data set. Selected samples were downloaded from gene expression omnibus (accession number: <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE47067">GSE47067</a>). As a brief summary, the data set contains the transcriptomic information of endothelial cells from two steady state tissues (brain and heart). More detailed information can be found in the paper by <em><a href="http://www.ncbi.nlm.nih.gov/pubmed/23871589">Nolan et al. 2013</a></em>. The data was normalized and a statistical analysis was performed to determine differentially expressed genes. <a href="http://david.abcc.ncifcrf.gov/">DAVID</a> functional annotation tool was used to perform a gene- annotation enrichment analysis of the set of differentially expressed genes (adjusted p-value &lt; 0.05). The data set contains the five following items:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">Description</th>
+<th align="left">Dimension</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">EC$eset</td>
+<td align="left">Data frame of normalized expression values of brain and heart endothelial cells (3 replicates)</td>
+<td align="left">20644 x 7</td>
+</tr>
+<tr class="even">
+<td align="left">EC$genelist</td>
+<td align="left">Data frame of differentially expressed genes (adjusted p-value &lt; 0.05)</td>
+<td align="left">2039 x 7</td>
+</tr>
+<tr class="odd">
+<td align="left">EC$david</td>
+<td align="left">Data frame of results from a functional analysis of the differentially expressed genes performed with DAVID</td>
+<td align="left">174 x 5</td>
+</tr>
+<tr class="even">
+<td align="left">EC$genes</td>
+<td align="left">Data frame of selected genes with logFC</td>
+<td align="left">37 x 2</td>
+</tr>
+<tr class="odd">
+<td align="left">EC$process</td>
+<td align="left">Character vector of selected enriched biological processes</td>
+<td align="left">7</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="getting-started" class="section level2">
+<h2>Getting started</h2>
+<p>As a first step we want to get an overview of the enriched GO terms of our differentially expressed genes. But before we start plotting we need to bring the data in the right format for the plotting functions. In general, the data object of the plotting functions can be created manually, but the package includes a function that does the job for you. The <em>circle_dat</em> function combines the result of the functional analysis with a list of selected genes and their logFC. Most likely a list of differentially expressed genes. <em>circle_dat</em> takes two data frames as an input. The first one contains the results of the functional analysis and should have at least four columns (category, term, genes, adjusted p-value). Additionally, a data frame of the selected genes and their logFC is needed. This data frame can be, for example, the result from a statistical analysis performed with <em>limma</em>. Let us have a look at the mentioned data frames.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GOplot)
+<span class="co"># Load the dataset</span>
+<span class="kw">data</span>(EC)
+<span class="co"># Get a glimpse of the data format of the results of the functional analysis... </span>
+<span class="kw">head</span>(EC$david)</code></pre>
+<pre><code>##   Category         ID                             Term
+## 1       BP GO:0007507                heart development
+## 2       BP GO:0001944          vasculature development
+## 3       BP GO:0001568         blood vessel development
+## 4       BP GO:0048729             tissue morphogenesis
+## 5       BP GO:0048514       blood vessel morphogenesis
+## 6       BP GO:0051336 regulation of hydrolase activity
+##                                                                                                                                                                                                                                                                                                                                                                              Genes
+## 1       DLC1, NRP2, NRP1, EDN1, PDLIM3, GJA1, TTN, GJA5, ZIC3, TGFB2, CERKL, GATA6, COL4A3BP, GAB1, SEMA3C, MKL2, SLC22A5, MB, PTPRJ, RXRA, VANGL2, MYH6, TNNT2, HHEX, MURC, MIB1, FOXC2, FOXC1, ADAM19, MYL2, TCAP, EGLN1, SOX9, ITGB1, CHD7, HEXIM1, PKD2, NFATC4, PCSK5, ACTC1, TGFBR2, NF1, HSPG2, SMAD3, TBX1, TNNI3, CSRP3, FOXP1, KCNJ8, PLN, TSC2, ATP6V0A1, TGFBR3, HDAC9
+## 2 GNA13, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, FOXO1, GJA5, TGFB2, WARS, CERKL, APOE, CXCR4, ANG, SEMA3C, NOS2, MKL2, FGF2, RAPGEF1, PTPRJ, RECK, EFNB2, VASH1, PNPLA6, THY1, MIB1, NUS1, FOXC2, FOXC1, CAV1, CDH2, MEIS1, WT1, CDH5, PTK2, FBXW8, CHD7, PLCD1, PLXND1, FIGF, PPAP2B, MAP2K1, TBX4, TGFBR2, NF1, TBX1, TNNI3, LAMA4, MEOX2, ECSCR, HBEGF, AMOT, TGFBR3, HDAC7
+## 3        GNA13, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, FOXO1, GJA5, TGFB2, WARS, CERKL, APOE, CXCR4, ANG, SEMA3C, NOS2, MKL2, FGF2, RAPGEF1, PTPRJ, RECK, VASH1, PNPLA6, THY1, MIB1, NUS1, FOXC2, FOXC1, CAV1, CDH2, MEIS1, WT1, CDH5, PTK2, FBXW8, CHD7, PLCD1, PLXND1, FIGF, PPAP2B, MAP2K1, TBX4, TGFBR2, NF1, TBX1, TNNI3, LAMA4, MEOX2, ECSCR, HBEGF, AMOT, TGFBR3, HDAC7
+## 4                                   DLC1, ENAH, NRP1, PGF, ZIC2, TGFB2, CD44, ILK, SEMA3C, RET, AR, RXRA, VANGL2, LEF1, TNNT2, HHEX, MIB1, NCOA3, FOXC2, FOXC1, TGFB1I1, WNT5A, COBL, BBS4, FGFR3, TNC, BMPR2, CTNND1, EGLN1, NR3C1, SOX9, TCF7L1, IGF1R, FOXQ1, MACF1, HOXA5, BCL2, PLXND1, CAR2, ACTC1, TBX4, SMAD3, FZD3, SHANK3, FZD6, HOXB4, FREM2, TSC2, ZIC5, TGFBR3, APAF1
+## 5                                                                                            GNA13, CAV1, ACVRL1, NRP1, PGF, IL18, LEPR, EDN1, GJA1, CDH2, MEIS1, WT1, TGFB2, WARS, PTK2, CERKL, APOE, CXCR4, ANG, SEMA3C, PLCD1, NOS2, MKL2, PLXND1, FIGF, FGF2, PTPRJ, TGFBR2, TBX4, NF1, TBX1, TNNI3, PNPLA6, VASH1, THY1, NUS1, MEOX2, ECSCR, AMOT, HBEGF, FOXC2, FOXC1, HDAC7
+## 6                                                                               CAV1, XIAP, AGFG1, ADORA2A, TNNC1, TBC1D9, LEPR, ABHD5, EDN1, ASAP2, ASAP3, SMAP1, TBC1D12, ANG, TBC1D14, MTCH1, TBC1D13, TBC1D4, TBC1D30, DHCR24, HIP1, VAV3, NOS1, NF1, MYH6, RICTOR, TBC1D22A, THY1, PLCE1, RNF7, NDEL1, CHML, IFT57, ACAP2, TSC2, ERN1, APAF1, ARAP3, ARAP2, ARAP1, HTR2A, F2R
+##      adj_pval
+## 1 0.000002170
+## 2 0.000010400
+## 3 0.000007620
+## 4 0.000119000
+## 5 0.000720000
+## 6 0.001171166</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ...and of the data frame of selected genes</span>
+<span class="kw">head</span>(EC$genelist)</code></pre>
+<pre><code>##        ID    logFC   AveExpr        t  P.Value adj.P.Val        B
+## 1 Slco1a4 6.645388 1.2168670 88.65515 1.32e-18  2.73e-14 29.02715
+## 2 Slc19a3 6.281525 1.1600468 69.95094 2.41e-17  2.49e-13 27.62917
+## 3     Ddc 4.483338 0.8365231 65.57836 5.31e-17  3.65e-13 27.18476
+## 4 Slco1c1 6.469384 1.3558865 59.87613 1.62e-16  8.34e-13 26.51242
+## 5  Sema3c 5.515630 2.3252117 58.53141 2.14e-16  8.81e-13 26.33626
+## 6 Slc38a3 4.761755 0.9218670 54.11559 5.58e-16  1.76e-12 25.70308</code></pre>
+<p>Now, that we know what the input data looks like it’s time to use the <em>cirlce_dat</em> function to create the plotting object.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the plotting object</span>
+circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, EC$genelist)</code></pre>
+<p>The <strong>circ</strong> object has eight columns with the following names:</p>
+<ul>
+<li>category</li>
+<li>ID</li>
+<li>term</li>
+<li>count</li>
+<li>gene</li>
+<li>logFC</li>
+<li>adj_pval</li>
+<li>zscore</li>
+</ul>
+<p>Since most of the gene- annotation enrichment analysis are based on the gene ontology database the package was build with this structure in mind, but is not restricted to it. As explained by <em><a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651">Ashburner et al.</a></em> in their paper from the year 2000, gene ontology is structured as an acyclic graph and it provides terms covering different areas. These terms are grouped into three independent categories: BP (biological process), CC (cellular component) or MF (molecular function). The first column of the <strong>circ</strong> object contains this information, which was already given in the input. For more information on the structure of gene ontology, have a look at the documentation section of the gene ontology consortium <a href="http://geneontology.org/page/ontology-documentation">website</a>. All the terms from inside the gene ontology database come with a GO <strong>ID</strong> and a GO <strong>term</strong> description. The <strong>ID</strong> column of the circ object is optional. So in case you want to use a functional analysis tool that is not based on gene ontology you won’t have an <strong>ID</strong> column. The term description column does contain just that: a description of the term and the performance of the implemented functions does not depend on possible resemblance with gene ontology terms. <strong>Count</strong> is the number of genes assigned to a term. <strong>Gene</strong> names and their <strong>logFC</strong> are taken from the input list of selected genes. The significance of a term is indicated by the adjusted p-value (<strong>adj_pval</strong>). Terms with an adjusted p-value &lt; 0.05 are considered as significantly enriched and are more likely to provide reliable information. The last column contains the <strong>zscore</strong>, an easy to calculate value to give you a hint if the biological process (/molecular function/cellular components) is more likely to be decreased (negative value) or increased (positive value).</p>
+<p><span class="math">\[zscore=\frac{(up-down)}{\sqrt{count}}\]</span></p>
+<p>Whereas <em>up</em> and <em>down</em> are the number of assigned genes up-regulated (logFC&gt;0) in the data or down- regulated (logFC&lt;0), respectively.</p>
+</div>
+<div id="the-plots" class="section level2">
+<h2>The plots</h2>
+<div id="the-modified-barplot-gobar" class="section level3">
+<h3>The modified barplot (GOBar)</h3>
+<p>Since we do not really know what to expect from our data the aim of the first figure should be to display as many terms as possible without going too much into details. Nevertheless, the figure shall help us to pick the interesting and valuable terms. Therefore, we need to have some parameters to quantify the importance. Since the majority of scientific sampled data is plotted using bar charts a modified version of the normal barplot function, named <em>GOBar</em>, is included. The <em>GOBar</em> function allows the user to quickly create an appealing barplot.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a simple barplot</span>
+<span class="kw">GOBar</span>(<span class="kw">subset</span>(circ, category ==<span class="st"> 'BP'</span>))</code></pre>
+<p><img src="images/GOBar.png" /></p>
+<p>On the y-axis the significance of the terms is shown and the bars are ordered according to their z-score. If you want, you can change the order by setting the argument <em>order.by.zscore</em> to FALSE. In this case the bars are ordered based on their significance. Additionally, the barplot can be easily faceted according to the categories of the terms using the argument <em>display</em> of the plotting function (output not shown).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Facet the barplot according to the categories of the terms </span>
+<span class="kw">GOBar</span>(circ, <span class="dt">display =</span> <span class="st">'multiple'</span>)</code></pre>
+<p>To add a title use <em>title</em> and to change the color scale of the z-score use the argument <em>zsc.col</em> (output not shown).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Facet the barplot, add a title and change the color scale for the z-score</span>
+<span class="kw">GOBar</span>(circ, <span class="dt">display =</span> <span class="st">'multiple'</span>, <span class="dt">title =</span> <span class="st">'Z-score colored barplot'</span>, <span class="dt">zsc.col =</span> <span class="kw">c</span>(<span class="st">'yellow'</span>, <span class="st">'black'</span>, <span class="st">'cyan'</span>))</code></pre>
+<p>Barplots are common and very easy to read, but they might not be the absolute solution. Another possibility to display an overview for high- dimensional data is the bubble plot.</p>
+</div>
+<div id="the-bubble-plot-gobubble" class="section level3">
+<h3>The bubble plot (GOBubble)</h3>
+<p>The bubble plot is another possibility to get an overview of the enriched terms. The z-score is assigned to the x-axis and the negative logarithm of the adjusted p-value to the y-axis, as in the barplot (the higher the more significant). The area of the displayed circles is proportional to the number of genes (circ$count) assigned to the term and the color corresponds to the category. The help page of the plotting function (?GOBubble) lists all the arguments to change the layout of the plot. As a default the circles are labeled with the term ID. Therefore, a table connecting the IDs and terms is displayed on the right side by default. You can hide it by setting the argument <em>table.legend</em> to FALSE. If you want to display the term description instead set the argument <em>ID</em> to FALSE. Not all the circles are labeld due to the limited space and the overlap of the circles. A threshold for the labeling is set (default=5) based on the negative logarithm of the adjusted p-value.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the bubble plot with a label threshold of 3</span>
+<span class="kw">GOBubble</span>(circ, <span class="dt">labels =</span> <span class="dv">3</span>)</code></pre>
+<p><img src="images/GOBubble1.png" alt="Circle plot." /></p>
+<p>The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colors can be changed with the argument <em>lfc.col</em>. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. You can change the layout of the plot with various arguments, see ?GOCirlce.The <em>nsub</em> argument needs a little bit more explanation to be used wisely. First of all, it can be a numeric or a character vector. If it is a character vector then it contains the IDs or term descriptions of the processes you want to display (output not shown).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a circular visualization of selected terms</span>
+IDs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'GO:0007507'</span>, <span class="st">'GO:0001568'</span>, <span class="st">'GO:0001944'</span>, <span class="st">'GO:0048729'</span>, <span class="st">'GO:0048514'</span>, <span class="st">'GO:0005886'</span>, <span class="st">'GO:0008092'</span>, <span class="st">'GO:0008047'</span>)
+<span class="kw">GOCircle</span>(circ, <span class="dt">nsub =</span> IDs)</code></pre>
+<p>If <em>nsub</em> is a numeric vector then the number defines how many terms are displayed. It starts with the first row of the input data frame (output not shown).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a circular visualization for 10 terms</span>
+<span class="kw">GOCircle</span>(circ, <span class="dt">nsub =</span> <span class="dv">10</span>)</code></pre>
+<p>This kind of visualization is only useful for a smaller set of terms. The maximum number of terms lies around 12. While the number of terms decreases the amount of displayed information increases.</p>
+</div>
+<div id="display-of-the-relationship-between-genes-and-terms-gochord" class="section level3">
+<h3>Display of the relationship between genes and terms (GOChord)</h3>
+<p>Based on the <strong><a href="http://circos.ca/">Circos</a></strong> plots designed by <em><a href="http://mkweb.bcgsc.ca/">Martin Krzywinski</a></em> the <em>GOChord</em> plotting function was implemented. It displays the relationship between a list of selected genes and terms, as well as the logFC of the genes. As an input a binary membership matrix is necessary. You can build the matrix on your own or you use the implemented function <em>chord_dat</em> which does the job for you. The function takes three arguments: <em>data</em>, <em>genes</em> and <em>process</em>, of which from the last two only one is mandatory. So, the <em>circle_dat</em> combined your expression data with the results from the functional analysis. The bar and bubble plot allowed you to get a first impression of your data and now, you selected a list of genes and processes you think are valuable. <em>GOCircle</em> adds a layer to display the expression values of the genes assigned to the terms, but it lacks the information of the relationship between the genes and the terms. It is not easy to figure out if some of the genes are linked to multiple processes. The chord plot fills the void left by <em>GOCircle</em>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Define a list of genes which you think are interesting to look at. The item EC$genes of the toy </span>
+<span class="co"># sample contains the data frame of selected genes and their logFC. Have a look...</span>
+<span class="kw">head</span>(EC$genes)</code></pre>
+<pre><code>##      ID      logFC
+## 1  PTK2 -0.6527904
+## 2 GNA13  0.3711599
+## 3  LEPR  2.6539788
+## 4  APOE  0.8698346
+## 5 CXCR4 -2.5647537
+## 6  RECK  3.6926860</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Since we have a lot of significantly enriched processes we selected some specific ones (EC$process)</span>
+EC$process</code></pre>
+<pre><code>## [1] &quot;heart development&quot;        &quot;phosphorylation&quot;         
+## [3] &quot;vasculature development&quot;  &quot;blood vessel development&quot;
+## [5] &quot;tissue morphogenesis&quot;     &quot;cell adhesion&quot;           
+## [7] &quot;plasma membrane&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now it is time to generate the binary matrix</span>
+chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(circ, EC$genes, EC$process)
+<span class="kw">head</span>(chord)</code></pre>
+<pre><code>##       heart development phosphorylation vasculature development
+## PTK2                  0               1                       1
+## GNA13                 0               0                       1
+## LEPR                  0               0                       1
+## APOE                  0               0                       1
+## CXCR4                 0               0                       1
+## RECK                  0               0                       1
+##       blood vessel development tissue morphogenesis cell adhesion
+## PTK2                         1                    0             0
+## GNA13                        1                    0             0
+## LEPR                         1                    0             0
+## APOE                         1                    0             0
+## CXCR4                        1                    0             0
+## RECK                         1                    0             0
+##       plasma membrane      logFC
+## PTK2                1 -0.6527904
+## GNA13               1  0.3711599
+## LEPR                1  2.6539788
+## APOE                1  0.8698346
+## CXCR4               1 -2.5647537
+## RECK                1  3.6926860</code></pre>
+<p>Rows are genes and columns are terms. A ‘0’ indicates that the gene is not assigned to the term; a ‘1’ the opposite. As mentioned before it is possible to leave either the <em>genes</em> or the <em>process</em> argument out. If you pass on the <em>process</em> argument the binary matrix is build for the list of selected genes and all the processes with at least one assigned gene. On the other hand, if you just provide a set of processes without limiting the list of genes, the binary matrix is generated for all the genes which are assigned to at least one of the processes from your list (output not shown).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the matrix with a list of selected genes</span>
+chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span class="dt">data =</span> circ, <span class="dt">genes =</span> EC$genes)
+<span class="co"># Generate the matrix with selected processes</span>
+chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span class="dt">data =</span> circ, <span class="dt">process =</span> EC$process)</code></pre>
+<p>Be aware that a pass on either <em>genes</em> or <em>process</em> might lead to a large binary matrix which results in a confusing visualization. The chart was designed for smaller subsets of high-dimensional data. Like the other plotting functions <em>GOChord</em> provides the user with a lot of arguments to change the layout of the plot, see ?GOChord. Most of the arguments address the adjustment of the font size of the labels, the space between them, the color scale for the logFC and the color of the ribbons. Despite the asthetics there are two other arguments: <em>gene.order</em> and <em>nlfc</em>. The first argument defines the order of the genes with the three possible options: ‘logFC’, ‘alphabetical’, ‘none’. Actually the options are quite self- explanatory. Sometimes you are performing the differential expression analysis for multiple conditions and/or batches. Therefore, you want to include more than one logFC value per gene. To adjust to this situation you should use the <em>nlfc</em> argument. It is a numeric value and it defines the number of logFC columns within your binary membership matrix. The default is ‘1’ assuming that most of the time you just have one contrast and one logFC value per gene.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create the plot</span>
+<span class="kw">GOChord</span>(chord, <span class="dt">space =</span> <span class="fl">0.02</span>, <span class="dt">gene.order =</span> <span class="st">'logFC'</span>, <span class="dt">gene.space =</span> <span class="fl">0.25</span>, <span class="dt">gene.size =</span> <span class="dv">5</span>)</code></pre>
+<p><img src="images/GOChord1.png" /></p>
+<p>The <em>space</em> argument defines the space between the colored rectangles representing the logFC. Also the font size of the gene labels (<em>gene.size</em>) and the space (<em>gene.space</em>) between them was changed. The genes were ordered according to their logFC values setting <em>gene.order</em> to ‘logFC’.</p>
+</div>
+<div id="golden-eye-gocluster" class="section level3">
+<h3>Golden eye (GOCluster)</h3>
+<p>The idea behind the <em>GOCluster</em> function is to visualize as much information as possible. Here is an example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GOCluster</span>(circ, EC$process, <span class="dt">clust.by =</span> <span class="st">'logFC'</span>, <span class="dt">term.width =</span> <span class="dv">2</span>)</code></pre>
+<p><img src="images/GOCluster.png" /></p>
+<p>Hierarchical clustering is a popular method for gene expression analysis due to its unsupervised nature assuring an unbiased result. Genes are grouped together based on their expression patterns, thus clusters are likely to contain sets of co-regulated or functionally related genes. <em>GOCluster</em> performs the hierarchical clustering of the gene expression profiles using the <em>hclust</em> method in core R. If you want to change the distance metric or the clustering algorithm use the arguments <em>metric</em> and <em>clust</em>, respectively. The resulting dendrogram is transformed with the help of <em>ggdendro</em> to be suitable for a visualization with <em>ggplot2</em>. As before a circular layout was chosen, because it is not only effective but also visually appealing. The first ring next to the dendrogram represents the logFC of the genes, which are actually the leaves of the clustering tree. In case you are interested in more than one contrast the <em>nlfc</em> argument is also available for this function. By default it is set to ‘1’, so only one ring is drawn. Like always the logFC values are color- coded with an user- definable color scale (<em>lfc.col</em>). The next ring represents the terms assigned to the genes. For aesthetic reasons the terms should be reduced to a reasonable number with the argument <em>process</em>. The terms are color- coded as well and you can change the default colors by using the argument <em>term.col</em>. Once again, the plotting function provides you with a bunch of arguments to change the layout of the plot and you can check them out on the help page, ?GOCluster. Probably the most important argument of the function is <em>clust.by</em>. It expects a character vector specifying if the clustering should be done for gene expression pattern (‘logFC’, as in the figure above) or functional categories (‘terms’).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GOCluster</span>(circ, EC$process, <span class="dt">clust.by =</span> <span class="st">'term'</span>, <span class="dt">lfc.col =</span> <span class="kw">c</span>(<span class="st">'darkgoldenrod1'</span>, <span class="st">'black'</span>, <span class="st">'cyan1'</span>))</code></pre>
+<p><img src="images/GOCluster2.png" /></p>
+</div>
+<div id="venn-diagram-govenn" class="section level3">
+<h3>Venn diagram (GOVenn)</h3>
+<p>In this biological context we implemented a Venn diagram that can be used to detect relations between various lists of differentially expressed genes or to explore the intersection of genes of multiple terms from the functional analysis. The Venn diagram does not only display the number of overlap genes, but it also displays the information about the gene expression patterns (commonly up- regulated, commonly down- regulated or contra- regulated). At the moment, maximal three datasets are aloud as an input. The input data frame contains at least two columns: one for the gene names and one for the logFC value.</p>
+<pre class="sourceCode r"><code class="sourceCode r">l1 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'heart development'</span>, <span class="kw">c</span>(genes,logFC))
+l2 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'plasma membrane'</span>, <span class="kw">c</span>(genes,logFC))
+l3 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'tissue morphogenesis'</span>, <span class="kw">c</span>(genes,logFC))
+<span class="kw">GOVenn</span>(l1,l2,l3, <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">'heart development'</span>, <span class="st">'plasma membrane'</span>, <span class="st">'tissue morphogenesis'</span>))</code></pre>
+<p><img src="images/GOVenn.png"/></p>
+<p>For example, heart development and tissue morphogenesis share a set of 22 genes, whereas 5 are commonly up-regulated and 17 are commonly down-regulated. The important thing to notice is, that the pie charts don’t display redundant information. Thus, if you compare three datasets the genes which are shared by all datasets (pie chart in the middle) are not included in the other pie charts. The following <a href="https://wwalter.shinyapps.io/Venn/">link</a> refers to the shinyapp of this tool. The web tool is slightly more interactive since the circles are area-proportional to the number of genes of the dataset and the small pie charts can be moved with sliders. It has also all the other options of the <em>GOVenn</em> function to change the layout of the plot. You can easily download the picture and gene lists.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
