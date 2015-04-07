@@ -10,7 +10,7 @@
 
 <meta name="author" content="Wencke Walter" />
 
-<meta name="date" content="2015-02-06" />
+<meta name="date" content="2015-04-07" />
 
 <title>GOplot</title>
 
@@ -25,7 +25,7 @@
 <div id="header">
 <h1 class="title">GOplot</h1>
 <h3 class="author"><em>Wencke Walter</em></h4>
-<h4 class="date"><em>2015-02-06</em></h4>
+<h4 class="date"><em>2015-04-07</em></h4>
 </div>
 
 
@@ -157,6 +157,14 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
   
 </code></pre>
 <p><img src="images/GOBubble2.png" /></p>
+<p>After this basic level of visualization the next figures will be more specific and concentrated on the terms of interest.</p>
+</div>
+<div id="circular-visualization-of-the-results-of-gene-annotation-enrichment-analysis-gocircle" class="section level3">
+<h3>Circular visualization of the results of gene- annotation enrichment analysis (GOCircle)</h3>
+<p>The overview plots shall help to decide which of the terms are the most interesting to us. Of course, this decision depends although on the hypothesis and ideas you want to confirm with your data. Not always are the most significant terms the ones you are interested in. So, after manually selecting a set of valuable terms (EC$process) the next figure should provide us with more details on this specific terms. One of the major issues we figured out by presenting the plots was: it was sometimes difficult to interpret the information the z-score provides. Since the measure is not that common. As shown above it is simply the number of up- regulated genes minus the number of down- regulated genes divided by the square root of the count.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Generate a circular visualization of the results of gene- annotation enrichment analysis</span>
+<span class="kw">GOCircle</span>(circ)</code></pre>
+<p><img src="images/GOCirc.png" /></p>
 <p>The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colors can be changed with the argument <em>lfc.col</em>. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. You can change the layout of the plot with various arguments, see ?GOCirlce.The <em>nsub</em> argument needs a little bit more explanation to be used wisely. First of all, it can be a numeric or a character vector. If it is a character vector then it contains the IDs or term descriptions of the processes you want to display (output not shown).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a circular visualization of selected terms</span>
 IDs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'GO:0007507'</span>, <span class="st">'GO:0001568'</span>, <span class="st">'GO:0001944'</span>, <span class="st">'GO:0048729'</span>, <span class="st">'GO:0048514'</span>, <span class="st">'GO:0005886'</span>, <span class="st">'GO:0008092'</span>, <span class="st">'GO:0008047'</span>)
