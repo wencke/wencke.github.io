@@ -152,6 +152,11 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the bubble plot with a label threshold of 3</span>
 <span class="kw">GOBubble</span>(circ, <span class="dt">labels =</span> <span class="dv">3</span>)</code></pre>
 <p><img src="images/GOBubble1.png" /></p>
+<p>To add a title, change the color of the circles, facet the plot and to change the label threshold use the following arguments:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Add a title, change the color of the circles, facet the plot according to the categories and change the label threshold</span>
+  
+</code></pre>
+<p><img src="images/GOBubble2.png" /></p>
 <p>The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colors can be changed with the argument <em>lfc.col</em>. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. You can change the layout of the plot with various arguments, see ?GOCirlce.The <em>nsub</em> argument needs a little bit more explanation to be used wisely. First of all, it can be a numeric or a character vector. If it is a character vector then it contains the IDs or term descriptions of the processes you want to display (output not shown).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a circular visualization of selected terms</span>
 IDs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'GO:0007507'</span>, <span class="st">'GO:0001568'</span>, <span class="st">'GO:0001944'</span>, <span class="st">'GO:0048729'</span>, <span class="st">'GO:0048514'</span>, <span class="st">'GO:0005886'</span>, <span class="st">'GO:0008092'</span>, <span class="st">'GO:0008047'</span>)
