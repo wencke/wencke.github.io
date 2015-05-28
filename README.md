@@ -10,6 +10,6 @@ GOplot is available via CRAN: http://cran.r-project.org/web/packages/GOplot
 
 For preprocessing: circle_dat() and chord_dat()
 
-For plotting: GOBubble(), GOBar(), GOChord(), GOCluster(), GOVenn()
+For plotting: GOBubble(), GOBar(), GOChord(), GOCluster(), GOCircle(), GOVenn()
 
 A manual can be found on the website https://wencke.github.io/
