@@ -35,13 +35,14 @@ theme_blank<-theme(axis.line=element_blank(),axis.text.x=element_blank(),
 #' @param size numeric; defines font size
 #' @param col character; defines color of table header
 #' @import ggplot2
+#' @import grid
 #' @import gridExtra  
 #' 
 
 draw_table<-function(data,size=4,col=''){
   x <- y <- idx <- NULL
 	colnames(data)<-tolower(colnames(data))
-  width=size*0.0125
+  width<-size*0.0125
 	nrow<-dim(data)[1]
 	TLen<-max(nchar(data$term))
 	IDLen<-max(nchar(data$id))
@@ -57,11 +58,11 @@ draw_table<-function(data,size=4,col=''){
 	}
   g<-	ggplot()+
 		geom_polygon(data=table, aes(x,y,group=idx),fill='transparent',color='black')+
-		geom_polygon(data=header, aes(x,y,group=idx),fill='gray70',color='black')+
-		geom_text(data=text, aes(x=x,y=y,label=label), color=text.col, size=rep(4,2*nrow+2))+
-		ylim(ymin-1.5,yheader+1.5)+
-		xlim(xmin-width,xmax+width)+
-		theme(plot.margin=unit(c(0.1,0.1,0.1,-1.1),'cm'))+
+    geom_polygon(data=header, aes(x,y,group=idx),fill='gray70',color='black')+
+    geom_text(data=text, aes(x=x,y=y,label=label), color=text.col, size=rep(4,2*nrow+2))+
+    ylim(ymin-1.5,yheader+1.5)+
+    xlim(xmin-width,xmax+width)+
+    theme(plot.margin=unit(c(0.1,0.1,0.1,-1.1),'cm'))+
 		theme_blank
 	return(g)
 }
@@ -108,9 +109,22 @@ bezier<-function(data, process.col){
 #'   example DAVID) and combines it with a list of selected genes and their 
 #'   logFC. The resulting data frame can be used as an input for various ploting
 #'   functions.
-#' @param terms A data frame with columns for 'category', 'ID', 'term', adjusted 
+#' @param terms A data frame with columns for 'category', 'ID', 'term', adjusted
 #'   p-value ('adj_pval') and 'genes'
 #' @param genes A data frame with columns for 'ID', 'logFC'
+#' @details Since most of the gene- annotation enrichment analysis are based on 
+#'   the gene ontology database the package was build with this structure in 
+#'   mind, but is not restricted to it. Gene ontology is structured as an 
+#'   acyclic graph and it provides terms covering different areas. These terms 
+#'   are grouped into three independent \code{categories}: BP (biological 
+#'   process), CC (cellular component) or MF (molecular function).
+#'   
+#'   The "ID" and "term" columns of the \code{terms} data frame refer to the ID 
+#'   and term description, whereas the ID is optional.
+#'   
+#'   The "ID" column of the \code{genes} data frame can contain any unique 
+#'   identifier. Nevertheless, the identifier has to be the same as in "genes" 
+#'   from \code{terms}.
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -157,32 +171,55 @@ circle_dat<-function(terms,genes){
 #' 
 #' @name chord_dat
 #' @title Creates a binary matrix.
-#' @description The function creates a matrix which represents the binary
-#'   relation (1= is related to, 0= is not related to) between selected genes
-#'   (row) and processes (column). The resulting matrix can be visualized in a
-#'   way with the \code{\link{GOChord}} function.
+#' @description The function creates a matrix which represents the binary 
+#'   relation (1= is related to, 0= is not related to) between selected genes 
+#'   (row) and processes (column). The resulting matrix can be visualized with 
+#'   the \code{\link{GOChord}} function.
 #' @param data A data frame with coloumns for GO ID|term and genes.
 #' @param genes A character vector of selected genes OR data frame with coloumns
 #'   for gene ID and logFC.
+#' @param limit A vector with two cutoff values (default= c(0,0)). The first 
+#'   value defines the minimum number of terms a gene has to be assigned to. The
+#'   second the minimum number of genes assigned to a selected term.
+#' @details If more than one logFC value for each gene is at disposal, only one 
+#'   should be used to create the binary matrix. The other values have to be 
+#'   added manually later. The parameter \code{limit} can be used to reduce the 
+#'   dimension of the calculated matrix. This might be useful to represent the 
+#'   data more clearly with \code{GOChord} later on. The first value of the 
+#'   vector defines the threshold for the minimum number of terms a gene has to 
+#'   be assigned to in order to be represented in the plot. Most of the time it 
+#'   is more meaningful to represent genes with various functions. A value of 3 
+#'   excludes all genes with less than three term assignments. Whereas the 
+#'   second value of the parameter restricts the number of terms according to 
+#'   the number of assigned genes. All terms with a count smaller or equal to
+#'   the threshold are excluded.
 #' @param process A character vector of selected processes
 #' @return A binary matrix
 #' @seealso \code{\link{GOChord}}
 #' @examples
 #' \dontrun{
-#' #Load the included dataset
+#' # Load the included dataset
 #' data(EC)
 #' 
-#' #Building the circ object
-#' circ<-circular_dat(EC$david, EC$genelist)
+#' # Building the circ object
+#' circ <- circular_dat(EC$david, EC$genelist)
 #' 
-#' #Building the binary matrix
-#' chord<-chord_dat(circ, EC$genes, EC$process)
+#' # Building the binary matrix
+#' chord <- chord_dat(circ, EC$genes, EC$process)
+#' 
+#' # Excluding genes which are assigned only to a single term
+#' chord <- chord_dat(circ, EC$genes, EC$process, limit = c(1,0))
+#' 
+#' # Excluding terms with a count smaller than 5
+#' chord <- chord_dat(circ, EC$genes, EC$process, limit = c(0,5))
+#' 
 #' }
 #' @export
 
-chord_dat<-function(data,genes,process){
+chord_dat<-function(data,genes,process,limit){
   id <- term <- BPprocess <- NULL
   colnames(data)<-tolower(colnames(data))
+  if (missing(limit)) limit<-c(0,0)
   if (missing(genes)){
     if (is.null(data$logFC)){
       genes<-unique(data$genes)
@@ -238,8 +275,10 @@ chord_dat<-function(data,genes,process){
 	}
 	idx<-which(colnames(mat)=='logFC')
   mat<-mat[is.na(mat[,idx])==F,]
-  if ((sum(colSums(mat)==0))>0) mat<-mat[,-which(colSums(mat)==0)]
-
+  if ((sum(rowSums(mat[,-dim(mat)[2]])<limit[1]))>0) mat<-mat[-which(rowSums(mat[,-dim(mat)[2]])<limit[1]),]
+  if ((sum(colSums(mat)<limit[2]))>0) mat<-mat[,-which(colSums(mat)<limit[2])]
+  if ((sum(rowSums(mat[,-dim(mat)[2]])<limit[1]))>0) mat<-mat[-which(rowSums(mat[,-dim(mat)[2]])<limit[1]),]
+  
   return(mat)
 }
 
@@ -248,12 +287,7 @@ chord_dat<-function(data,genes,process){
 #' @title Bubble plot.
 #' @description The function creates a bubble plot of the input \code{data}. The
 #'   input \code{data} can be created with the help of the 
-#'   \code{\link{circle_dat}} function. The x- axis represents the z-score; the 
-#'   y-axis the negative logarithm of the adjusted p-value corresponding to 
-#'   the significance of the term. The area of the displayed circles is 
-#'   proportional to the number of genes assigned to the term. Each circle is 
-#'   colored according to it's category and labeled alternatively with the ID or
-#'   term name.
+#'   \code{\link{circle_dat}} function.
 #' @param data A data frame with coloumns for category, GO ID, term, adjusted 
 #'   p-value, z-score, count(num of genes)
 #' @param display A character vector. Indicates whether it should be a single 
@@ -270,8 +304,16 @@ chord_dat<-function(data,genes,process){
 #' @param table.col If TRUE then the table entries are colored according to 
 #'   their category, if FALSE then entries are black
 #' @param bg If TRUE within the plot a grey background will be drawn
+#' @details The x- axis of the plot represents the z-score. The negative
+#'   logarithm of the adjusted p-value (corresponding to the significance of the
+#'   term) is displayed on the y-axis. The area of the plotted circles is 
+#'   proportional to the number of genes assigned to the term. Each circle is 
+#'   colored according to its category and labeled alternatively with the ID or 
+#'   term name.
 #' @import ggplot2
+#' @import grid
 #' @import gridExtra
+#' @import ggvis
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -291,54 +333,66 @@ chord_dat<-function(data,genes,process){
 #' }
 #' @export
 
-GOBubble<-function(data, display, title, color, labels, ID=T, table.legend=T, table.col=T, bg=T){
+GOBubble<-function(data, display, title, color, labels, ID=T, table.legend=T, table.col=T, static=T){
   zscore <- adj_pval <- category <- count <- id <- term <- NULL
   if (missing(display)) display<-'single'
   if (missing(title)) title<-''
   if (missing(color)) cols<-c("chartreuse4","brown2","cornflowerblue") else cols<-color
   if (missing(labels)) labels<-5
   
-	colnames(data)<-tolower(colnames(data))
-	if(!'count'%in%colnames(data)){
-	rang<-c(5,5)
-	data$count<-rep(1,dim(data)[1])
-	}else {rang<-c(1,30)}
-	data$adj_pval<--log(data$adj_pval,10)
-	sub<-data[!duplicated(data$term),]
-	g<-ggplot(sub,aes(zscore,adj_pval))+
-	   labs(title=title,x='z-score',y='-log (adj p-value)')+
-	   geom_point(aes(col=category,size=count),alpha=1/2)+
-	   geom_hline(yintercept=1.3,col='orange')+
-	   scale_size(range=rang, guide='none')
-	if (!is.character(labels)) sub2<-subset(sub,subset=sub$adj_pval>=labels) else sub2<-subset(sub, sub$id%in%labels|sub$term%in%labels)
-	if (display=='single'){
-		g<-g+ scale_colour_manual('Category',values = cols, labels=c('Biological Process','Cellular Component','Molecular Function'))+
-	   	    theme(legend.position='bottom')+
- 		      annotate ("text", x =min(sub$zscore), y =1.5, label = "threshold", colour = "orange",size = 3)
-		if (ID) g<-g+ geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=id),size=5) else g<-g+geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=term),size=4)
-    if (table.legend){
-      if (table.col) table<-draw_table(sub2,size=4,col=cols) else table<-draw_table(sub2,size=4,col='black')
-      if (bg) g<-g+theme(plot.margin=unit(c(0.1,0.1,0.1,0.5),'cm')) else g<-g+theme(plot.margin=unit(c(0.1,0.1,0.1,0.5),'cm'),panel.background=element_blank(),panel.grid.minor=element_blank(),plot.background=element_blank()) 
-			par(mar=c(0.1,0.1,0.1,0.1))
-			grid.arrange(g,table, heights=c(1,1),widths=c(1.8,1),ncol=2)
-		}else{
-      if (bg) g else g+theme(panel.background=element_blank(),panel.grid.minor=element_blank(),plot.background=element_blank())
+  if(static){
+    colnames(data)<-tolower(colnames(data))
+	  if(!'count'%in%colnames(data)){
+	    rang<-c(5,5)
+	    data$count<-rep(1,dim(data)[1])
+	  }else {rang<-c(1,30)}
+	  data$adj_pval<--log(data$adj_pval,10)
+	  sub<-data[!duplicated(data$term),]
+	  g<-ggplot(sub,aes(zscore,adj_pval))+
+      labs(title=title,x='z-score',y='-log (adj p-value)')+
+      geom_point(aes(col=category,size=count),alpha=1/2)+
+      geom_hline(yintercept=1.3,col='orange')+
+      scale_size(range=rang, guide='none')
+	  if (!is.character(labels)) sub2<-subset(sub,subset=sub$adj_pval>=labels) else sub2<-subset(sub, sub$id%in%labels|sub$term%in%labels)
+	  if (display=='single'){
+		  g<-g+ scale_colour_manual('Category',values = cols, labels=c('Biological Process','Cellular Component','Molecular Function'))+
+		    theme(legend.position='bottom')+
+		    annotate ("text", x =min(sub$zscore), y =1.5, label = "threshold", colour = "orange",size = 3)
+		  if (ID) g<-g+ geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=id),size=5) else g<-g+geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=term),size=4)
+      if (table.legend){
+        if (table.col) table<-draw_table(sub2,size=4,col=cols) else table<-draw_table(sub2,size=4,col='black')
+        g<-g+theme(plot.margin=unit(c(0.1,0.1,0.1,0.5),'cm'),axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),panel.background=element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_line(color='grey80'),plot.background=element_blank()) 
+        par(mar=c(0.1,0.1,0.1,0.1))
+			  grid.arrange(g,table, heights=c(1,1),widths=c(1.8,1),ncol=2)
+		  }else{
+        g+theme(axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),panel.background=element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_line(color='grey80'),plot.background=element_blank(),axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'))
       }
-	}else{
-		g<-g+ facet_grid(.~category,space='free_x',scales='free_x')+scale_colour_manual(values = cols,guide='none')
-		if (ID) {
-      if (bg==F){
-      g+ geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=id),size=5)+theme(panel.background=element_blank(),panel.grid.minor=element_blank(),plot.background=element_blank()) 
+	  }else{
+		  g<-g+ facet_grid(.~category,space='free_x',scales='free_x')+scale_colour_manual(values = cols,guide='none')
+		  if (ID) {
+          g+ geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=id),size=5)+theme(axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),panel.border=element_rect(fill='transparent',color='grey80'),panel.background=element_blank(),panel.grid=element_blank(),plot.background=element_blank()) 
       }else{
-        g+ geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=id),size=5)
+          g+geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=term),size=5)+theme(axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),panel.border=element_rect(fill='transparent',color='grey80'),panel.background=element_blank(),panel.grid=element_blank(),plot.background=element_blank())
       }
-      }else{
-        if (bg==F){
-          g+geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=term),size=5)+theme(panel.background=element_blank(),panel.grid.minor=element_blank(),plot.background=element_blank())
-        }else{
-          g+geom_text(data=sub2,aes(x=zscore,y=adj_pval,label=term),size=5)
-        }}
-	}
+	  }
+ }else{
+   colnames(data)<-tolower(colnames(data))
+   data$adj_pval<--log(data$adj_pval,10)
+   sub<-data[!duplicated(data$term),]
+   if(!'count'%in%colnames(data)){
+     rang<-c(400,400)
+     data$count<-rep(1,dim(data)[1])
+   }else {rang<-c(50,800)}
+   texts<-function(x){
+     if(is.null(x)) return(NULL)
+     paste0("GO Term: ", x$term)
+   }
+   sub %>% ggvis(~zscore, ~adj_pval, fill=~category,size=~count, key:=~term, opacity:=0.5) %>% 
+     layer_points() %>%
+     scale_numeric('size', range=rang) %>%
+     hide_legend('fill') %>%
+     add_tooltip(texts, 'hover')
+ }
 }
 
 #' 
@@ -347,7 +401,7 @@ GOBubble<-function(data, display, title, color, labels, ID=T, table.legend=T, ta
 #' @description Z-score colored barplot of terms ordered alternatively by 
 #'   z-score or the negative logarithm of the adjusted p-value
 #' @param data A data frame containing at least the term ID and/or term, the 
-#'   adjusted p-value and the z-score. A possible input can be generated with
+#'   adjusted p-value and the z-score. A possible input can be generated with 
 #'   the \code{circle_dat} function
 #' @param display A character vector indicating whether a single plot ('single')
 #'   or a facet plot with panels for each category should be drawn 
@@ -358,8 +412,12 @@ GOBubble<-function(data, display, title, color, labels, ID=T, table.legend=T, ta
 #' @param title The title of the plot
 #' @param zsc.col Character vector to define the color scale for the z-score of 
 #'   the form c(high, midpoint,low)
+#' @details If \code{display} is used to facet the plot the width of the panels
+#'   will be proportional to the length of the x scale.
 #' @import ggplot2
+#' @import grid
 #' @import gridExtra
+#' @import ggvis
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -376,7 +434,7 @@ GOBubble<-function(data, display, title, color, labels, ID=T, table.legend=T, ta
 #' }
 #' @export
 
-GOBar<-function(data,display, order.by.zscore=T, title, zsc.col){
+GOBar<-function(data, display, order.by.zscore=T, title, zsc.col, static=T){
   id <- adj_pval <- zscore <- NULL
   if (missing(display)) display<-'single'
   if (missing(title)) title<-''
@@ -384,26 +442,50 @@ GOBar<-function(data,display, order.by.zscore=T, title, zsc.col){
   colnames(data)<-tolower(colnames(data))
 	data$adj_pval<--log(data$adj_pval,10)
 	sub<-data[!duplicated(data$term),]
-	if (order.by.zscore==T) {
-		sub<-sub[order(sub$zscore,decreasing=T),]
-		leg<-theme(legend.position='bottom')
-	}else{
-		sub<-sub[order(sub$adj_pval,decreasing=T),]
-		leg<-theme(legend.justification=c(1,1), legend.position=c(0.98,0.995),legend.background = element_rect(fill='transparent'),legend.box='vertical',legend.direction='horizontal')
-	}
-	g<-	ggplot(sub,aes(x=factor(id,levels=reorder(id,adj_pval)),y=adj_pval,fill=zscore))+
-		geom_bar(stat='identity')+
-		labs(title=title,x='',y='-log (adj p-value)')+
-		leg+
-		theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-		scale_fill_gradient2('z-score',low=zsc.col[3],mid=zsc.col[2],high=zsc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(sub$zscore),max(sub$zscore)),labels=c('decreasing','increasing'))
-	if (display=='single') g else g+facet_grid(.~category,space='free_x',scales='free_x')
+  
+  if (static){ 
+	  if (order.by.zscore==T) {
+		  sub<-sub[order(sub$zscore,decreasing=T),]
+		  leg<-theme(legend.position='bottom')
+		  g<-  ggplot(sub,aes(x=factor(id,levels=reorder(id,adj_pval)),y=adj_pval,fill=zscore))+
+		    geom_bar(stat='identity', color='black')+
+		    scale_fill_gradient2('z-score',low=zsc.col[3],mid=zsc.col[2],high=zsc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(sub$zscore),max(sub$zscore)),labels=c('decreasing','increasing'))+
+		    labs(title=title,x='',y='-log (adj p-value)')+
+		    leg
+	  }else{
+		  sub<-sub[order(sub$adj_pval,decreasing=T),]
+		  leg<-theme(legend.justification=c(1,1), legend.position=c(0.98,0.995),legend.background = element_rect(fill='transparent'),legend.box='vertical',legend.direction='horizontal')
+		  g<-  ggplot(sub,aes(x=factor(id,levels=reorder(id,adj_pval)),y=zscore,fill=adj_pval))+
+		    geom_bar(stat='identity', color='black')+
+		    scale_fill_gradient2('Significance',guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(sub$adj_pval),max(sub$adj_pval)),labels=c('low','high'))+
+		    labs(title=title,x='',y='z-score')+
+		    leg
+	  }
+	  if (display=='single'){
+      g+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),
+               panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+               panel.grid.minor=element_blank(),plot.background=element_blank())        
+    }else{
+      g+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line=element_line(color='grey80'),axis.ticks=element_line(color='grey80'),
+               panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+               panel.grid.minor=element_blank(),plot.background=element_blank())+
+               facet_grid(.~category,space='free_x',scales='free_x')
+    }
+  }else{
+    texts<-function(x){
+      if(is.null(x)) return(NULL)
+      paste0("GO Term: ", x$term)
+    }
+    sub %>% 
+      ggvis(~id, ~adj_pval, key:= ~term) %>% 
+      layer_bars() %>%
+      add_tooltip(texts, 'hover')
+  }
 }
 
 #' 
 #' @name GOCircle
-#' @title Circular visualization of the results of gene- annotation enrichment 
-#'   analysis.
+#' @title Circular visualization of the results of a functional analysis.
 #' @description The circular plot combines gene expression and gene- annotation 
 #'   enrichment data. A subset of terms is displayed like the \code{GOBar} plot 
 #'   in combination with a scatterplot of the gene expression data. The whole 
@@ -421,11 +503,21 @@ GOBar<-function(data,display, order.by.zscore=T, title, zsc.col){
 #' @param table.legend Shall a table be displayd or not? (default=TRUE)
 #' @param zsc.col Character vector to define the color scale for the z-score of 
 #'   the form c(high, midpoint,low)
-#' @param lfc.col A character vector specifying the color for up- and
+#' @param lfc.col A character vector specifying the color for up- and 
 #'   down-regulated genes
 #' @param label.size Size of the segment labels (default=5)
 #' @param label.fontface Font style of the segment labels (default='bold')
+#' @details The outer circle shows a scatter plot for each term of the logFC of 
+#'   the assigned genes. The colors can be changed with the argument 
+#'   \code{lfc.col}.
+#'   
+#'   The \code{nsub} argument needs a bit more explanation to be used wisely. First of 
+#'   all, it can be a numeric or a character vector. If it is a character vector
+#'   then it contains the IDs or term descriptions of the displayed processes.If
+#'   \code{nsub} is a numeric vector then the number defines how many terms are 
+#'   displayed. It starts with the first row of the input data frame.
 #' @import ggplot2
+#' @import grid
 #' @import gridExtra
 #' @seealso \code{\link{circle_dat}}, \code{\link{GOBar}}
 #' @examples
@@ -492,22 +584,22 @@ GOCircle<-function(data, title, nsub, rad1, rad2, table.legend=T, zsc.col, lfc.c
 	for (ys in 1:length(logs)) cols<-c(cols,ifelse(data$logFC[ys]>0,'upregulated','downregulated'))
 	dfp<-data.frame(logx=xm,logy=logs,logFC=factor(cols),logy2=rep(rad2,length(logs)))
 	c<-	ggplot()+
-		geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y1,ymax=y1+ymax,fill=zscore),colour='black')+
-		geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2,ymax=y2+1),fill='gray70')+
-		geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.5,ymax=y2+0.5),colour='white')+
-		geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.25,ymax=y2+0.25),colour='white')+
-		geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.75,ymax=y2+0.75),colour='white')+
-		geom_text(data=df, aes(x=x+(xmax/2),y=y2+1.3,label=ID,angle=360-(x=x+(xmax/2))/(10/360)),size=label.size,fontface=label.fontface)+
-		coord_polar()+
-		labs(title=title)+
-		ylim(1,rad2+1.6)+
-		xlim(0,10)+
-		theme_blank+
-		scale_fill_gradient2('z-score',low=zsc.col[3],mid=zsc.col[2],high=zsc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(df$zscore),max(df$zscore)),labels=c('decreasing','increasing'))+
-		theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')+	
-		geom_point(data=dfp, aes(x=logx,y=logy2+logy),pch=21,fill='transparent',color='black',size=3)+
-		geom_point(data=dfp,aes(x=logx,y=logy2+logy,color=logFC),size=2.5)+
-		scale_colour_manual(values = lfc.col, guide=guide_legend(title.position="top",title.hjust=0.5))		
+    geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y1,ymax=y1+ymax,fill=zscore),colour='black')+
+    geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2,ymax=y2+1),fill='gray70')+
+    geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.5,ymax=y2+0.5),colour='white')+
+    geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.25,ymax=y2+0.25),colour='white')+
+    geom_rect(data=df, aes(xmin=x,xmax=x+xmax,ymin=y2+0.75,ymax=y2+0.75),colour='white')+
+    geom_text(data=df, aes(x=x+(xmax/2),y=y2+1.3,label=ID,angle=360-(x=x+(xmax/2))/(10/360)),size=label.size,fontface=label.fontface)+
+    coord_polar()+
+    labs(title=title)+
+    ylim(1,rad2+1.6)+
+    xlim(0,10)+
+    theme_blank+
+    scale_fill_gradient2('z-score',low=zsc.col[3],mid=zsc.col[2],high=zsc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(df$zscore),max(df$zscore)),labels=c('decreasing','increasing'))+
+    theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')+	
+    geom_point(data=dfp, aes(x=logx,y=logy2+logy),pch=21,fill='transparent',color='black',size=3)+
+    geom_point(data=dfp,aes(x=logx,y=logy2+logy,color=logFC),size=2.5)+
+    scale_colour_manual(values = lfc.col, guide=guide_legend(title.position="top",title.hjust=0.5))		
 
 	if (table.legend){
 		table<-draw_table(suby,size=4, col='black')
@@ -522,29 +614,39 @@ GOCircle<-function(data, title, nsub, rad1, rad2, table.legend=T, zsc.col, lfc.c
 #' 
 #' @name GOChord
 #' @title Displays the relationship between genes and terms.
-#' @description The GOChord function generates a circularly composited 
-#'   overview of selected/specific genes and their assigned processes or terms. 
-#'   More generally, it joins genes and processes via ribbons in an 
-#'   intersection-like graph. The input can be generated with the 
-#'   \code{\link{chord_dat}} function.
+#' @description The GOChord function generates a circularly composited overview 
+#'   of selected/specific genes and their assigned processes or terms. More 
+#'   generally, it joins genes and processes via ribbons in an intersection-like
+#'   graph. The input can be generated with the \code{\link{chord_dat}} 
+#'   function.
 #' @param data The matrix represents the binary relation (1= is related to, 0= 
 #'   is not related to) between a set of genes (rows) and processes (columns); a
 #'   column for the logFC of the genes is optional
 #' @param space The space between the chord segments of the plot
 #' @param gene.order A character vector defining the order of the displayed gene
-#'   labels; possible options: 'logFC', 'alphabetical', 'none'
+#'   labels
 #' @param gene.size The size of the gene labels
-#' @param gene.space The space between the gene labels and the segement of the logFC
+#' @param gene.space The space between the gene labels and the segement of the 
+#'   logFC
 #' @param nlfc Defines the number of logFC columns (default=1)
-#' @param lfc.col The fill color for the logFC specified in the following 
-#'   form: c(color for low values, color for the mid point, color for the high 
-#'   values)
+#' @param lfc.col The fill color for the logFC specified in the following form: 
+#'   c(color for low values, color for the mid point, color for the high values)
 #' @param lfc.min Specifies the minimium value of the logFC scale (default = -3)
 #' @param lfc.max Specifies the maximum value of the logFC scale (default = 3)
 #' @param ribbon.col The background color of the ribbons
 #' @param border.size Defines the size of the ribbon borders
 #' @param process.label The size of the legend entries
 #' @param title The title (on top) of the plot
+#' @details The \code{gene.order} argument has three possible options: "logFC", 
+#'   "alphabetical", "none". Actually, the options are quite self- explanatory.
+#'   
+#'   Another argument which needs a bit more explanation is \code{nlfc}.
+#'   Differential expression analysis can be performed for multiple conditions 
+#'   and/or batches. Therefore, the data frame contains more than one logFC
+#'   value per gene. To adjust to this situation the \code{nlfc} argument is
+#'   used. It is a numeric value and it defines the number of logFC columns
+#'   within the binary membership matrix. The default is "1" assuming that most
+#'   of the time only one contrast is considered.
 #' @seealso \code{\link{chord_dat}}
 #' @import ggplot2
 #' @examples
@@ -671,22 +773,22 @@ GOChord<-function(data, title, space, gene.order, gene.size, gene.space, nlfc=1,
   df_genes$logFC<-logFC
 	
 g<- ggplot()+
-	  geom_polygon(data = df_process, aes(x, y,group=id),fill='gray70', inherit.aes = F,color='black')+
-	  geom_polygon(data = df_process, aes(x, y,group=id),fill=cols, inherit.aes = F,alpha=0.6,color='black')+	
-	  geom_point(aes(x=xpro,y=ypro,size=factor(labels,levels=labels),shape=NA),data=df_texp)+
-	  guides(size=guide_legend("GO Terms",ncol=4,byrow=T,override.aes=list(shape=22,fill=unique(cols),size = 8)))+
-	  geom_text(aes(xgen,ygen,label=labels,angle=angle),data=df_texg,size=gene.size)+
-	  geom_polygon(aes(x=lx,y=ly,group=ID),data=df_path,fill=colRibb,color='black',size=border.size,inherit.aes = F,)+		
-	  labs(title=title)+
-	  theme_blank
+  geom_polygon(data = df_process, aes(x, y,group=id),fill='gray70', inherit.aes = F,color='black')+
+  geom_polygon(data = df_process, aes(x, y,group=id),fill=cols, inherit.aes = F,alpha=0.6,color='black')+	
+  geom_point(aes(x=xpro,y=ypro,size=factor(labels,levels=labels),shape=NA),data=df_texp)+
+  guides(size=guide_legend("GO Terms",ncol=4,byrow=T,override.aes=list(shape=22,fill=unique(cols),size = 8)))+
+  geom_text(aes(xgen,ygen,label=labels,angle=angle),data=df_texg,size=gene.size)+
+  geom_polygon(aes(x=lx,y=ly,group=ID),data=df_path,fill=colRibb,color='black',size=border.size,inherit.aes = F,)+		
+  labs(title=title)+
+	theme_blank
     
   if (nlfc>=1){
     g+ geom_polygon(data = df_genes, aes(x, y,group=id,fill=logFC), inherit.aes = F,color='black')+
-       scale_fill_gradient2('logFC',low=lfc.col[3],mid=lfc.col[2],high=lfc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(df_genes$logFC),max(df_genes$logFC)),labels=c(round(min(df_genes$logFC)),round(max(df_genes$logFC))))+
-       theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')
+      scale_fill_gradient2('logFC',low=lfc.col[3],mid=lfc.col[2],high=lfc.col[1],guide=guide_colorbar(title.position="top",title.hjust=0.5),breaks=c(min(df_genes$logFC),max(df_genes$logFC)),labels=c(round(min(df_genes$logFC)),round(max(df_genes$logFC))))+
+      theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')
   }else{
     g+ geom_polygon(data = df_genes, aes(x, y,group=id),fill='gray50', inherit.aes = F,color='black')+
-       theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')
+      theme(legend.position='bottom',legend.background = element_rect(fill='transparent'),legend.box='horizontal',legend.direction='horizontal')
   }
 }
 

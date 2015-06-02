@@ -156,7 +156,7 @@ get_overlap2<-function(A,B){
   if (class(B$logFC)!='numeric'){
     B$logFC<-gsub(",", ".", gsub("\\.", "", B$logFC))
     B$Trend<-sapply(as.numeric(B$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ A$Trend<-sapply(B$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+  }else{ B$Trend<-sapply(B$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
   AB<-A[(A$ID%in%B$ID)==T,which(colnames(A)%in%c('ID','logFC','Trend'))]
   BA<-B[(B$ID%in%A$ID)==T,which(colnames(B)%in%c('ID','logFC','Trend'))]
   A_only<-A[(A$ID%in%B$ID)==F,which(colnames(A)%in%c('ID','logFC','Trend'))]
