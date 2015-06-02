@@ -6,6 +6,9 @@ Despite the plethora of methods available for the functional analysis of omics d
 
 GOplot is available via CRAN: http://cran.r-project.org/web/packages/GOplot
 
+* the latest released version: `install.packages("GOplot")`
+* the latest development version: `install_github("wencke/wencke.github.io")`
+
 ## Available functions
 
 For preprocessing: circle_dat() and chord_dat()
