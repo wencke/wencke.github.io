@@ -1,0 +1,31 @@
+Package: GOplot
+Type: Package
+Title: Visualization Of Functional Analysis Data
+Version: 1.0.1
+Date: 2015-06-01
+Author: Wencke Walter, Fatima Sanchez-Cabo
+Maintainer: Wencke Walter <wencke.walter@arcor.de>
+URL: https://github.com/wencke/wencke.github.io
+BugReports: https://github.com/wencke/wencke.github.io/issues
+Description: Implementation of multilayered visualizations for enhanced graphical 
+    representation of functional analysis data. It combines and integrates omics 
+    data derived from expression and functional annotation enrichment analyses. 
+    Its plotting functions have been developed with an hierarchical structure in
+    mind: starting from a general overview to identify the most enriched
+    categories (modified bar plot, bubble plot) to a more detailed one displaying
+    different types of relevant information for the molecules in a given set of
+    categories (circle plot, chord plot, cluster plot, venn diagram).
+Depends: 
+    ggplot2,
+    ggdendro,
+    ggvis,
+    grid,
+    gridExtra,
+    RColorBrewer,
+    R (>= 3.2.0)
+License: GPL-2
+Suggests: 
+    knitr
+VignetteBuilder: knitr
+LazyData: TRUE
+
