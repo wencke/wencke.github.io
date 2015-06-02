@@ -633,7 +633,7 @@ GOChord<-function(data, title, space, gene.order, gene.size, gene.space, nlfc=1,
     if (nlfc==1){
       df_genes<-data.frame(x=xp,y=yp,id=rep(c(1:Nrow),each=4+2*l),logFC=rep(lfc,each=4+2*l))
     }else{
-      df_genes<-data.frame(x=xp,y=yp,id=rep(c(1:(3*Nrow)),each=4+2*l),logFC=rep(logs,each=4+2*l))  
+      df_genes<-data.frame(x=xp,y=yp,id=rep(c(1:(nlfc*Nrow)),each=4+2*l),logFC=rep(logs,each=4+2*l))  
       }
 	}else{
 	  df_genes<-data.frame(x=xp,y=yp,id=rep(c(1:Nrow),each=4+2*l))
