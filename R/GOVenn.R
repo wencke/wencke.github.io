@@ -29,16 +29,16 @@ get_overlap<-function(A,B,C){
   UP<-NULL;DOWN<-NULL;Change<-NULL
   if (class(A$logFC)!='numeric'){
     A$logFC<-gsub(",", ".", gsub("\\.", "", A$logFC))
-    A$Trend<-sapply(as.numeric(A$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ A$Trend<-sapply(A$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+    A$Trend<-sapply(as.numeric(A$logFC), function(x) ifelse(x > 0,'UP','DOWN')) 
+  }else{ A$Trend<-sapply(A$logFC, function(x) ifelse(x > 0,'UP','DOWN'))}
   if (class(B$logFC)!='numeric'){
     B$logFC<-gsub(",", ".", gsub("\\.", "", B$logFC))
-    B$Trend<-sapply(as.numeric(B$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ B$Trend<-sapply(B$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+    B$Trend<-sapply(as.numeric(B$logFC), function(x) ifelse(x > 0,'UP','DOWN')) 
+  }else{ B$Trend<-sapply(B$logFC, function(x) ifelse(x > 0,'UP','DOWN'))}
   if (class(C$logFC)!='numeric'){
     C$logFC<-gsub(",", ".", gsub("\\.", "", C$logFC))
-    C$Trend<-sapply(as.numeric(C$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ C$Trend<-sapply(C$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+    C$Trend<-sapply(as.numeric(C$logFC), function(x) ifelse(x > 0,'UP','DOWN')) 
+  }else{ C$Trend<-sapply(C$logFC, function(x) ifelse(x > 0,'UP','DOWN'))}
   if (sum(((A$ID%in%B$ID)==T)==T)==0){
     AB<-data.frame() 
   }else{
@@ -151,12 +151,12 @@ get_overlap2<-function(A,B){
   UP<-NULL;DOWN<-NULL;Change<-NULL
   if (class(A$logFC)!='numeric'){
     A$logFC<-gsub(",", ".", gsub("\\.", "", A$logFC))
-    A$Trend<-sapply(as.numeric(A$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ A$Trend<-sapply(A$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+    A$Trend<-sapply(as.numeric(A$logFC), function(x) ifelse(x > 0,'UP','DOWN')) 
+  }else{ A$Trend<-sapply(A$logFC, function(x) ifelse(x > 0,'UP','DOWN'))}
   if (class(B$logFC)!='numeric'){
     B$logFC<-gsub(",", ".", gsub("\\.", "", B$logFC))
-    B$Trend<-sapply(as.numeric(B$logFC), function(x) ifelse(x>1,'UP','DOWN')) 
-  }else{ B$Trend<-sapply(B$logFC, function(x) ifelse(x>1,'UP','DOWN'))}
+    B$Trend<-sapply(as.numeric(B$logFC), function(x) ifelse(x > 0,'UP','DOWN')) 
+  }else{ B$Trend<-sapply(B$logFC, function(x) ifelse(x > 0,'UP','DOWN'))}
   AB<-A[(A$ID%in%B$ID)==T,which(colnames(A)%in%c('ID','logFC','Trend'))]
   BA<-B[(B$ID%in%A$ID)==T,which(colnames(B)%in%c('ID','logFC','Trend'))]
   A_only<-A[(A$ID%in%B$ID)==F,which(colnames(A)%in%c('ID','logFC','Trend'))]
