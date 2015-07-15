@@ -69,52 +69,53 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   if (missing(term.width)) term.width<- 2*lfc.width+term.space else term.width<-term.width*(-1)+term.space
   
   if (nlfc){
-    colnames(data)[1:3]<-c('genes','term','logFC')
-    chord<-chord_dat(data[,1:3])
+    colnames(data)[1:3] <- c('genes','term','logFC')
+    chord <- chord_dat(data[,1:3])
   }else{
-    tmp<-data[!duplicated(data$genes),c(5,6)]
-    chord<-chord_dat(data,tmp,process)
+    chord <- chord_dat(data = data, process = process)
   }
-  if (clust.by=='logFC') distance<-dist(chord[,dim(chord)[2]], method=metric)
-  if (clust.by=='term') distance<-dist(chord, method=metric)
-  cluster<-hclust(distance, method=clust)
-  dendr<-dendro_data(cluster)
-  y_range<-range(dendr$segments$y)
-  x_pos<-data.frame(x=dendr$label$x, label=as.character(dendr$label$label))
-  chord<-as.data.frame(chord)
-  chord$label<-as.character(rownames(chord))
-  all<-merge(x_pos,chord,by='label')
-  all$label<-as.character(all$label)
+  if (clust.by=='logFC') distance <- dist(chord[,dim(chord)[2]], method=metric)
+  if (clust.by=='term') distance <- dist(chord, method=metric)
+  cluster <- hclust(distance, method=clust)
+  dendr <- dendro_data(cluster)
+  y_range <- range(dendr$segments$y)
+  x_pos <- data.frame(x=dendr$label$x, label=as.character(dendr$label$label))
+  chord <- as.data.frame(chord)
+  chord$label <- as.character(rownames(chord))
+  all <- merge(x_pos, chord, by='label')
+  all$label <- as.character(all$label)
   if (nlfc){
-    lfc_rect<-all[,c(2,dim(all)[2])]
-    for (l in 4:dim(data)[2]) lfc_rect<-cbind(lfc_rect, sapply(all$label,function(x) data[match(x,data$genes),l]))
-    num<-dim(data)[2]-1
-    tmp<-seq(lfc.space,lfc.width,length=num)
+    lfc_rect <- all[,c(2, dim(all)[2])]
+    for (l in 4:dim(data)[2]) lfc_rect <- cbind(lfc_rect, sapply(all$label, function(x) data[match(x, data$genes), l]))
+    num <- dim(data)[2]-1
+    tmp <- seq(lfc.space, lfc.width, length = num)
     lfc<-data.frame(x=numeric(),width=numeric(),space=numeric(),logFC=numeric())
     for (l in 1:(length(tmp)-1)){
       tmp_df<-data.frame(x=lfc_rect[,1],width=tmp[l+1],space=tmp[l],logFC=lfc_rect[,l+1])
       lfc<-rbind(lfc,tmp_df)
     }
   }else{
-    lfc<-all[,c(2,dim(all)[2])]  
-    lfc$space<-lfc.space
-    lfc$width<-lfc.width
+    lfc <- all[,c(2, dim(all)[2])]  
+    lfc$space <- lfc.space
+    lfc$width <- lfc.width
   }
-  term<-all[,c(2:(length(process)+2))]
+  term <- all[,c(2:(length(process)+2))]
   color<-NULL;termx<-NULL;tspace<-NULL;twidth<-NULL
   for (row in 1:dim(term)[1]){
-    idx<-which(term[row,-1]!=0)
-    termx<-c(termx,rep(term[row,1],length(idx)))
-    color<-c(color,term.col[idx])
-    tmp<-seq(term.space,term.width,length=length(idx)+1)
-    tspace<-c(tspace,tmp[1:(length(tmp)-1)])
-    twidth<-c(twidth,tmp[2:length(tmp)])      
+    idx <- which(term[row,-1] != 0)
+    if(length(idx) != 0){
+      termx<-c(termx,rep(term[row,1],length(idx)))
+      color<-c(color,term.col[idx])
+      tmp<-seq(term.space,term.width,length=length(idx)+1)
+      tspace<-c(tspace,tmp[1:(length(tmp)-1)])
+      twidth<-c(twidth,tmp[2:length(tmp)])
+    }
   }
-  tmp<-sapply(lfc$logFC, function(x) ifelse(x > lfc.max, lfc.max, x))
-  logFC<-sapply(tmp, function(x) ifelse(x < lfc.min, lfc.min, x))
-  lfc$logFC<-logFC
-  term_rect<-data.frame(x=termx, width=twidth, space=tspace, col=color)
-  legend<-data.frame(x=1:length(process),label=process)
+  tmp <- sapply(lfc$logFC, function(x) ifelse(x > lfc.max, lfc.max, x))
+  logFC <- sapply(tmp, function(x) ifelse(x < lfc.min, lfc.min, x))
+  lfc$logFC <- logFC
+  term_rect <- data.frame(x = termx, width = twidth, space = tspace, col = color)
+  legend <- data.frame(x = 1:length(process),label = process)
 
   ggplot()+
     geom_segment(data=segment(dendr), aes(x=x, y=y, xend=xend, yend=yend))+

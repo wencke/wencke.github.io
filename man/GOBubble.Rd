@@ -3,6 +3,10 @@
 \name{GOBubble}
 \alias{GOBubble}
 \title{Bubble plot.}
+\usage{
+GOBubble(data, display, title, color, labels, ID = T, table.legend = T,
+  table.col = T)
+}
 \arguments{
 \item{data}{A data frame with coloumns for category, GO ID, term, adjusted
 p-value, z-score, count(num of genes)}
@@ -26,8 +30,6 @@ displayed on the right side of the plot or not (default = TRUE)}
 
 \item{table.col}{If TRUE then the table entries are colored according to
 their category, if FALSE then entries are black}
-
-\item{static}{If TRUE interactivity is disabled (default = TRUE)}
 }
 \description{
 The function creates a bubble plot of the input \code{data}. The

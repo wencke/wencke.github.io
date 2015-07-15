@@ -18,7 +18,6 @@ Description: Implementation of multilayered visualizations for enhanced graphica
 Depends: 
     ggplot2 (>= 1.0.1),
     ggdendro (>= 0.1.15),
-    ggvis (>= 0.4.2),
     gridExtra (>= 2.0.0),
     RColorBrewer (>= 1.1.2),
     R (>= 3.2.1)

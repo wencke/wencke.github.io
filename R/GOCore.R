@@ -157,7 +157,9 @@ circle_dat <- function(terms, genes){
 #'   relation (1= is related to, 0= is not related to) between selected genes 
 #'   (row) and processes (column). The resulting matrix can be visualized with 
 #'   the \code{\link{GOChord}} function.
-#' @param data A data frame with coloumns for GO ID|term and genes.
+#' @param data A data frame with at least two coloumns: GO ID|term and genes. 
+#'   Each row contains exactly one GO ID|term and one gene. A column containing
+#'   logFC values is optional and might be used if \code{genes} is missing.
 #' @param genes A character vector of selected genes OR data frame with coloumns
 #'   for gene ID and logFC.
 #' @param limit A vector with two cutoff values (default= c(0,0)). The first 
@@ -173,7 +175,7 @@ circle_dat <- function(terms, genes){
 #'   is more meaningful to represent genes with various functions. A value of 3 
 #'   excludes all genes with less than three term assignments. Whereas the 
 #'   second value of the parameter restricts the number of terms according to 
-#'   the number of assigned genes. All terms with a count smaller or equal to
+#'   the number of assigned genes. All terms with a count smaller or equal to 
 #'   the threshold are excluded.
 #' @param process A character vector of selected processes
 #' @return A binary matrix
@@ -200,21 +202,21 @@ circle_dat <- function(terms, genes){
 
 chord_dat <- function(data, genes, process, limit){
   id <- term <- BPprocess <- NULL
-  colnames(data) <- tolower(colnames(data))
+
   if (missing(limit)) limit <- c(0, 0)
   if (missing(genes)){
     if (is.null(data$logFC)){
       genes <- unique(data$genes)
     }else{
-      sub <- data[!duplicated(data$genes), ]
-      genes <- data.frame(genes = sub$genes, logFC = sub$logFC)
+      genes <- subset(data, !duplicated(genes), c(genes, logFC))
     }
   }else{
     if(is.vector(genes)){
       genes <- as.character(genes) 
     }else{
-      if(class(genes[, 2]) != 'numeric') logFC <- as.numeric(levels(genes[, 2]))[genes[, 2]] else logFC <- genes[,2]
-      genes <- as.character(genes[, 1])      
+      if(class(genes[, 2]) != 'numeric') genes[, 2] <- as.numeric(levels(genes[, 2]))[genes[, 2]]
+      genes[, 1] <- as.character(genes[, 1])
+      colnames(genes) <- c('genes', 'logFC')
     }
   }
   if (missing(process)){
@@ -230,37 +232,28 @@ chord_dat <- function(data, genes, process, limit){
     colnames(subData)[which(colnames(subData) == 'term')] <- 'BPprocess'
   }
   
-  mat <- matrix(0, ncol = length(process), nrow = length(genes))
-  if (length(unique(subData$BPprocess)) < dim(subData)[1]){
+  if(is.vector(genes)){
+    M <- genes[genes%in%unique(subData$genes)]
+    mat <- matrix(0, ncol = length(process), nrow = length(M))
+    rownames(mat) <- M
+    colnames(mat) <- process
     for (p in 1:length(process)){
       sub2 <- subset(subData, BPprocess == process[p])
-      for (g in 1:length(genes))mat[g, p] <- ifelse(genes[g]%in%sub2$genes, 1, 0)
+      for (g in 1:length(M)) mat[g, p] <- ifelse(M[g]%in%sub2$genes, 1, 0)
     }
-    rownames(mat) <- genes
-    lfc <- sapply(genes, function(x) subData[match(x, subData$genes), which(colnames(subData) == 'logfc')])
-    mat <- cbind(mat, lfc)
-    colnames(mat) <- c(process, 'logFC')
   }else{
-    row <- 0
-    for (g in genes){
-      row <- row + 1
-      for(p in 1:dim(subData)[1]){
-        d <- strsplit(as.vector(subData$genes[p]), ',')
-        vec <- c()
-        for (sub in 1:length(d[[1]])) vec <- c(vec, ifelse(g == (d[[1]][sub]), 1, 0)) 
-        mat[row, p] <- ifelse(sum(vec) == 0, 0, 1)
-      }
+    genes <- subset(genes, genes %in% unique(subData$genes))
+    N <- length(process) + 1
+    M <- genes[,1] 
+    mat <- matrix(0, ncol = N, nrow = length(M))
+    rownames(mat) <- M
+    colnames(mat) <- c(process, 'logFC') 
+    mat[,N] <- genes[,2]
+    for (p in 1:(N-1)){
+      sub2 <- subset(subData, BPprocess == process[p])
+      for (g in 1:length(M)) mat[g, p] <- ifelse(M[g]%in%sub2$genes, 1, 0)
     }
-    if (!is.vector(genes)) mat <- cbind(mat, logFC)
-    rownames(mat) <- genes
-    if(dim(mat)[2] != length(subData$BPprocess)) colnames(mat) <- c(as.character(subData$BPprocess), 'logFC') else colnames(mat) <- subData$BPprocess		
   }
-  idx <- which(colnames(mat) == 'logFC')
-  mat <- mat[is.na(mat[, idx]) == F, ]
-  if ((sum(rowSums(mat[, -dim(mat)[2]]) < limit[1])) > 0) mat <- mat[-which(rowSums(mat[, -dim(mat)[2]]) < limit[1]), ]
-  if ((sum(colSums(mat) < limit[2])) > 0) mat <- mat[, -which(colSums(mat) < limit[2])]
-  if ((sum(rowSums(mat[, -dim(mat)[2]]) < limit[1])) > 0) mat <- mat[-which(rowSums(mat[, -dim(mat)[2]]) < limit[1]), ]
-  
   return(mat)
 }
 
@@ -285,7 +278,6 @@ chord_dat <- function(data, genes, process, limit){
 #'   displayed on the right side of the plot or not (default = TRUE)
 #' @param table.col If TRUE then the table entries are colored according to 
 #'   their category, if FALSE then entries are black
-#' @param static If TRUE interactivity is disabled (default = TRUE) 
 #' @details The x- axis of the plot represents the z-score. The negative
 #'   logarithm of the adjusted p-value (corresponding to the significance of the
 #'   term) is displayed on the y-axis. The area of the plotted circles is 
@@ -293,9 +285,7 @@ chord_dat <- function(data, genes, process, limit){
 #'   colored according to its category and labeled alternatively with the ID or 
 #'   term name.If static is set to FALSE the mouse hover effect will be enabled.
 #' @import ggplot2
-#' @importFrom grid unit
 #' @import gridExtra
-#' @import ggvis
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -314,72 +304,52 @@ chord_dat <- function(data, genes, process, limit){
 #' GOBubble(circ, display='multiple')
 #' }
 #' @export
-utils::globalVariables(c(":=", "%>%"))
-GOBubble <- function(data, display, title, color, labels, ID = T, table.legend = T, table.col = T, static = T){
-  zscore <- adj_pval <- category <- count <- id <- term <- key <- opacity <- NULL
+GOBubble <- function(data, display, title, color, labels, ID = T, table.legend = T, table.col = T){
+  zscore <- adj_pval <- category <- count <- id <- term <- NULL
   if (missing(display)) display <- 'single'
   if (missing(title)) title <- ''
   if (missing(color)) cols <- c("chartreuse4", "brown2", "cornflowerblue") else cols <- color
   if (missing(labels)) labels <- 5
   
-  if(static){
-    colnames(data) <- tolower(colnames(data))
-    if(!'count'%in%colnames(data)){
-      rang <- c(5, 5)
-      data$count <- rep(1, dim(data)[1])
-    }else {rang <- c(1, 30)}
-    data$adj_pval <- -log(data$adj_pval, 10)
-    sub <- data[!duplicated(data$term), ]
-    g <- ggplot(sub, aes(zscore, adj_pval))+
-      labs(title = title, x = 'z-score', y = '-log (adj p-value)')+
-      geom_point(aes(col = category, size = count), alpha = 1 / 2)+
-      geom_hline(yintercept = 1.3, col = 'orange')+
-      scale_size(range = rang, guide = 'none')
-    if (!is.character(labels)) sub2 <- subset(sub, subset = sub$adj_pval >= labels) else sub2 <- subset(sub, sub$id%in%labels | sub$term%in%labels)
-    if (display == 'single'){
-      g <- g + scale_colour_manual('Category', values = cols, labels = c('Biological Process', 'Cellular Component', 'Molecular Function'))+
-        theme(legend.position = 'bottom')+
-        annotate ("text", x = min(sub$zscore), y = 1.5, label = "threshold", colour = "orange", size = 3)
-      if (ID) g <- g+ geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) else g <- g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 4)
-      if (table.legend){
-        if (table.col) table <- draw_table(sub2, col = cols) else table <- draw_table(sub2)
-        g <- g + theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.5), 'cm'), axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
-                       panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank()) 
-        par(mar = c(0.1, 0.1, 0.1, 0.1))
-        grid.arrange(g, table, ncol = 2)
-      }else{
-        g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
-                  panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank())
-      }
+  colnames(data) <- tolower(colnames(data))
+  if(!'count'%in%colnames(data)){
+    rang <- c(5, 5)
+    data$count <- rep(1, dim(data)[1])
+  }else {rang <- c(1, 30)}
+  data$adj_pval <- -log(data$adj_pval, 10)
+  sub <- data[!duplicated(data$term), ]
+  g <- ggplot(sub, aes(zscore, adj_pval))+
+    labs(title = title, x = 'z-score', y = '-log (adj p-value)')+
+    geom_point(aes(col = category, size = count), alpha = 1 / 2)+
+    geom_hline(yintercept = 1.3, col = 'orange')+
+    scale_size(range = rang, guide = 'none')
+  if (!is.character(labels)) sub2 <- subset(sub, subset = sub$adj_pval >= labels) else sub2 <- subset(sub, sub$id%in%labels | sub$term%in%labels)
+  if (display == 'single'){
+    g <- g + scale_colour_manual('Category', values = cols, labels = c('Biological Process', 'Cellular Component', 'Molecular Function'))+
+      theme(legend.position = 'bottom')+
+      annotate ("text", x = min(sub$zscore), y = 1.5, label = "threshold", colour = "orange", size = 3)
+    if (ID) g <- g+ geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) else g <- g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 4)
+    if (table.legend){
+      if (table.col) table <- draw_table(sub2, col = cols) else table <- draw_table(sub2)
+      g <- g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
+                     panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank()) 
+      par(mar = c(0.1, 0.1, 0.1, 0.1))
+      grid.arrange(g, table, ncol = 2)
     }else{
-      g <- g + facet_grid(.~category, space = 'free_x', scales = 'free_x') + scale_colour_manual(values = cols, guide ='none')
-      if (ID) {
-        g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) + 
-          theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
-                panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank()) 
-      }else{
-        g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 5) + 
-          theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
-                panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank())
-      }
+      g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
+                panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank())
     }
   }else{
-    colnames(data) <- tolower(colnames(data))
-    data$adj_pval <- -log(data$adj_pval, 10)
-    sub <- data[!duplicated(data$term), ]
-    if(!'count'%in%colnames(data)){
-      rang <- c(400, 400)
-      data$count <- rep(1, dim(data)[1])
-    }else {rang <- c(50, 800)}
-    texts <- function(x){
-      if(is.null(x)) return(NULL)
-      paste0("GO Term: ", x$term)
+    g <- g + facet_grid(.~category, space = 'free_x', scales = 'free_x') + scale_colour_manual(values = cols, guide ='none')
+    if (ID) {
+      g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) + 
+        theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
+              panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank()) 
+    }else{
+      g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 5) + 
+        theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
+              panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank())
     }
-    sub %>% ggvis(~zscore, ~adj_pval, fill = ~category, size = ~count, key := ~term, opacity := 0.5) %>% 
-      layer_points() %>%
-      scale_numeric('size', range = rang) %>%
-      hide_legend(c('fill', 'size')) %>%
-      add_tooltip(texts, 'hover')
   }
 }
 
@@ -579,7 +549,6 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   
   if (table.legend){
     table <- draw_table(suby, col = 'black')
-    c <- c + theme(plot.margin = unit(c(0.1, 0.1, 0.1, -1.5), 'cm'))
     par(mar = c(0.1, 0.1, 0.1, 0.1))
     grid.arrange(c, table, ncol = 2)
   }else{
