@@ -241,7 +241,7 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   xmax2 <- rep(-pi / Nrow + space, length = Nrow)
   for (s in 1:Nrow){
     xh <- seq(x2[s], x2[s] + xmax2[s], length = l)
-    if (nlfc == 1){
+    if (nlfc <= 1){
       xp <- c(xp, (r1 + 0.05) * sin(x2[s]), (r1 + 0.05) * sin(xh), (r1 + 0.05) * sin(x2[s] + xmax2[s]), r2 * sin(x2[s] + xmax2[s]), r2 * sin(rev(xh)), r2 * sin(x2[s]))
       yp <- c(yp, (r1 + 0.05) * cos(x2[s]), (r1 + 0.05) * cos(xh), (r1 + 0.05) * cos(x2[s] + xmax2[s]), r2 * cos(x2[s] + xmax2[s]), r2 * cos(rev(xh)), r2 * cos(x2[s]))
     }else{
@@ -288,9 +288,11 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   df_bezier$x.start <- x.start
   df_bezier$y.start <- y.start
   df_path <- bezier(df_bezier, colRib)
-  tmp <- sapply(df_genes$logFC, function(x) ifelse(x > lfc.max, lfc.max, x))
-  logFC <- sapply(tmp, function(x) ifelse(x < lfc.min, lfc.min, x))
-  df_genes$logFC <- logFC
+  if(length(df_genes$logFC) != 0){
+    tmp <- sapply(df_genes$logFC, function(x) ifelse(x > lfc.max, lfc.max, x))
+    logFC <- sapply(tmp, function(x) ifelse(x < lfc.min, lfc.min, x))
+    df_genes$logFC <- logFC
+  }
   
   g<- ggplot() +
     geom_polygon(data = df_process, aes(x, y, group=id), fill='gray70', inherit.aes = F,color='black') +
