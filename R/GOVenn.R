@@ -1,11 +1,11 @@
 #' circleFun
-#'
+#' 
 #' @name circleFun
 #' @param center Center point of the circle
 #' @param diameter Defines the diameter of the circle
 #' @param npoints Number of points used to draw the circle
 #' @import ggplot2
-#' 
+#'   
 circleFun <- function(center = c(0,0),diameter = 1, npoints = 100){
   r = diameter / 2
   tt <- seq(0,2*pi,length.out = npoints)

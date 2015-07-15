@@ -2,7 +2,7 @@ Package: GOplot
 Type: Package
 Title: Visualization Of Functional Analysis Data
 Version: 1.0.1
-Date: 2015-06-01
+Date: 2015-07-13
 Author: Wencke Walter, Fatima Sanchez-Cabo
 Maintainer: Wencke Walter <wencke.walter@arcor.de>
 URL: https://github.com/wencke/wencke.github.io
@@ -16,13 +16,12 @@ Description: Implementation of multilayered visualizations for enhanced graphica
     different types of relevant information for the molecules in a given set of
     categories (circle plot, chord plot, cluster plot, venn diagram).
 Depends: 
-    ggplot2,
-    ggdendro,
-    ggvis,
-    grid,
-    gridExtra,
-    RColorBrewer,
-    R (>= 3.2.0)
+    ggplot2 (>= 1.0.1),
+    ggdendro (>= 0.1.15),
+    ggvis (>= 0.4.2),
+    gridExtra (>= 2.0.0),
+    RColorBrewer (>= 1.1.2),
+    R (>= 3.2.1)
 License: GPL-2
 Suggests: 
     knitr
