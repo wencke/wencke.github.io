@@ -36,6 +36,7 @@
 #' @import ggplot2
 #' @import ggdendro
 #' @import RColorBrewer
+#' @import stats
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -58,7 +59,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   if (missing(metric)) metric<-'euclidean'
   if (missing(clust)) clust<-'average'
   if (missing(clust.by)) clust.by<-'term'
-  if (missing(nlfc)) nlfc<-F
+  if (missing(nlfc)) nlfc <- F
   if (missing(lfc.col)) lfc.col<-c('firebrick1','white','dodgerblue')
   if (missing(lfc.min)) lfc.min <- -3
   if (missing(lfc.max)) lfc.max <- 3
@@ -70,13 +71,13 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   
   if (nlfc){
     colnames(data)[1:3] <- c('genes','term','logFC')
-    chord <- chord_dat(data[,1:3])
+    chord <- chord_dat(data[,1:3], process = process)
   }else{
     chord <- chord_dat(data = data, process = process)
   }
-  if (clust.by=='logFC') distance <- dist(chord[,dim(chord)[2]], method=metric)
-  if (clust.by=='term') distance <- dist(chord, method=metric)
-  cluster <- hclust(distance, method=clust)
+  if (clust.by=='logFC') distance <- stats::dist(chord[,dim(chord)[2]], method=metric)
+  if (clust.by=='term') distance <- stats::dist(chord, method=metric)
+  cluster <- stats::hclust(distance, method=clust)
   dendr <- dendro_data(cluster)
   y_range <- range(dendr$segments$y)
   x_pos <- data.frame(x=dendr$label$x, label=as.character(dendr$label$label))
@@ -169,6 +170,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
 #'   of the time only one contrast is considered.
 #' @seealso \code{\link{chord_dat}}
 #' @import ggplot2
+#' @import grDevices
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -197,7 +199,7 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   if (missing(lfc.col)) lfc.col <- c('brown1', 'azure', 'cornflowerblue')
   if (missing(lfc.min)) lfc.min <- -3
   if (missing(lfc.max)) lfc.max <- 3
-  if (missing(ribbon.col)) colRib <- rainbow(Ncol - nlfc) else colRib <- ribbon.col
+  if (missing(ribbon.col)) colRib <- grDevices::rainbow(Ncol - nlfc) else colRib <- ribbon.col
   if (missing(border.size)) border.size <- 0.5
   if (missing (process.label)) process.label <- 11
   
