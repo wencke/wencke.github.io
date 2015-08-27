@@ -54,6 +54,7 @@ draw_table <- function(data, col = ''){
 #' @name bezier
 #' @param data data frame x.start,x.end,y.start,y.end
 #' @param process.col Color of the processes
+#' @import grDevices
 #' 
 
 bezier <- function(data, process.col){
@@ -63,7 +64,7 @@ bezier <- function(data, process.col){
   sequ <- seq(0, 1, by = 0.01)
   N <- dim(data)[1]
   sN <- seq(1, N, by = 2)
-  if (process.col[1] == '') col_rain <- rainbow(N) else col_rain <- process.col
+  if (process.col[1] == '') col_rain <- grDevices::rainbow(N) else col_rain <- process.col
   for (n in sN){
     xval <- c(); xval2 <- c(); yval <- c(); yval2 <- c()
     for (t in sequ){
@@ -162,9 +163,6 @@ circle_dat <- function(terms, genes){
 #'   logFC values is optional and might be used if \code{genes} is missing.
 #' @param genes A character vector of selected genes OR data frame with coloumns
 #'   for gene ID and logFC.
-#' @param limit A vector with two cutoff values (default= c(0,0)). The first 
-#'   value defines the minimum number of terms a gene has to be assigned to. The
-#'   second the minimum number of genes assigned to a selected term.
 #' @details If more than one logFC value for each gene is at disposal, only one 
 #'   should be used to create the binary matrix. The other values have to be 
 #'   added manually later. The parameter \code{limit} can be used to reduce the 
@@ -186,7 +184,7 @@ circle_dat <- function(terms, genes){
 #' data(EC)
 #' 
 #' # Building the circ object
-#' circ <- circular_dat(EC$david, EC$genelist)
+#' circ <- circle_dat(EC$david, EC$genelist)
 #' 
 #' # Building the binary matrix
 #' chord <- chord_dat(circ, EC$genes, EC$process)
@@ -200,13 +198,13 @@ circle_dat <- function(terms, genes){
 #' }
 #' @export
 
-chord_dat <- function(data, genes, process, limit){
-  id <- term <- BPprocess <- NULL
+chord_dat <- function(data, genes, process){
+  id <- term <- logFC <- BPprocess <- NULL
 
-  if (missing(limit)) limit <- c(0, 0)
+  colnames(data) <- tolower(colnames(data))
   if (missing(genes)){
     if (is.null(data$logFC)){
-      genes <- unique(data$genes)
+      genes <- as.character(unique(data$genes))
     }else{
       genes <- subset(data, !duplicated(genes), c(genes, logFC))
     }
@@ -220,7 +218,7 @@ chord_dat <- function(data, genes, process, limit){
     }
   }
   if (missing(process)){
-    process <- unique(data$term)
+    process <- as.character(unique(data$term))
   }else{
     if(class(process) != 'character') process <- as.character(process)
   }
@@ -286,6 +284,7 @@ chord_dat <- function(data, genes, process, limit){
 #'   term name.If static is set to FALSE the mouse hover effect will be enabled.
 #' @import ggplot2
 #' @import gridExtra
+#' @import graphics
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -333,7 +332,7 @@ GOBubble <- function(data, display, title, color, labels, ID = T, table.legend =
       if (table.col) table <- draw_table(sub2, col = cols) else table <- draw_table(sub2)
       g <- g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
                      panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank()) 
-      par(mar = c(0.1, 0.1, 0.1, 0.1))
+      graphics::par(mar = c(0.1, 0.1, 0.1, 0.1))
       grid.arrange(g, table, ncol = 2)
     }else{
       g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
@@ -374,6 +373,7 @@ GOBubble <- function(data, display, title, color, labels, ID = T, table.legend =
 #'   will be proportional to the length of the x scale.
 #' @import ggplot2
 #' @import gridExtra
+#' @import stats
 #' @examples
 #' \dontrun{
 #' #Load the included dataset
@@ -402,7 +402,7 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
   if (order.by.zscore == T) {
     sub <- sub[order(sub$zscore, decreasing = T), ]
     leg <- theme(legend.position = 'bottom')
-    g <-  ggplot(sub, aes(x = factor(id, levels = reorder(id, adj_pval)), y = adj_pval, fill = zscore)) +
+    g <-  ggplot(sub, aes(x = factor(id, levels = stats::reorder(id, adj_pval)), y = adj_pval, fill = zscore)) +
       geom_bar(stat = 'identity', color = 'black') +
       scale_fill_gradient2('z-score', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(sub$zscore), max(sub$zscore)), labels = c('decreasing', 'increasing')) +
@@ -465,6 +465,8 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
 #'   displayed. It starts with the first row of the input data frame.
 #' @import ggplot2
 #' @import gridExtra
+#' @import stats
+#' @import graphics
 #' @seealso \code{\link{circle_dat}}, \code{\link{GOBar}}
 #' @examples
 #' \dontrun{
@@ -519,7 +521,7 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   xm <- c(); logs <- c()
   for (sc in 1:length(scount)){
     idx <- c(idx_term[sc], idx_term[sc + 1] - 1)
-    val <- runif(scount[sc], df$x[sc] + 0.06, (df$x[sc] + df$xmax[sc] - 0.06))
+    val <- stats::runif(scount[sc], df$x[sc] + 0.06, (df$x[sc] + df$xmax[sc] - 0.06))
     xm <- c(xm, val)
     r_logFC <- round(range(data$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
     for (lfc in idx[1]:idx[2]){
@@ -549,7 +551,7 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   
   if (table.legend){
     table <- draw_table(suby, col = 'black')
-    par(mar = c(0.1, 0.1, 0.1, 0.1))
+    graphics::par(mar = c(0.1, 0.1, 0.1, 0.1))
     grid.arrange(c, table, ncol = 2)
   }else{
     c + theme(plot.background = element_rect(fill = 'aliceblue'), panel.background = element_rect(fill = 'white'))
