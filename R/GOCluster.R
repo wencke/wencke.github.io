@@ -188,16 +188,19 @@ check_chord <- function(mat, limit){
 #' @import grDevices
 #' @examples
 #' \dontrun{
-#' #Load the included dataset
+#' # Load the included dataset
 #' data(EC)
 #' 
-#' #Generating the binary matrix
+#' # Generating the binary matrix
 #' chord<-chord_dat(circ,EC$genes,EC$process)
 #' 
-#' #Creating the chord plot
+#' # Creating the chord plot
 #' GOChord(chord)
 #' 
-#' #Creating the chord plot genes ordered by logFC and a different logFC color scale
+#' # Excluding process with less than 5 assigned genes
+#' GOChord(chord, limit = c(0,5))
+#' 
+#' # Creating the chord plot genes ordered by logFC and a different logFC color scale
 #' GOChord(chord,space=0.02,gene.order='logFC',lfc.col=c('red','black','cyan'))
 #' }
 #' @export

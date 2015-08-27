@@ -4,19 +4,17 @@
 \alias{chord_dat}
 \title{Creates a binary matrix.}
 \usage{
-chord_dat(data, genes, process, limit)
+chord_dat(data, genes, process)
 }
 \arguments{
-\item{data}{A data frame with coloumns for GO ID|term and genes.}
+\item{data}{A data frame with at least two coloumns: GO ID|term and genes.
+Each row contains exactly one GO ID|term and one gene. A column containing
+logFC values is optional and might be used if \code{genes} is missing.}
 
 \item{genes}{A character vector of selected genes OR data frame with coloumns
 for gene ID and logFC.}
 
 \item{process}{A character vector of selected processes}
-
-\item{limit}{A vector with two cutoff values (default= c(0,0)). The first
-value defines the minimum number of terms a gene has to be assigned to. The
-second the minimum number of genes assigned to a selected term.}
 }
 \value{
 A binary matrix
@@ -49,16 +47,10 @@ If more than one logFC value for each gene is at disposal, only one
 data(EC)
 
 # Building the circ object
-circ <- circular_dat(EC$david, EC$genelist)
+circ <- circle_dat(EC$david, EC$genelist)
 
 # Building the binary matrix
 chord <- chord_dat(circ, EC$genes, EC$process)
-
-# Excluding genes which are assigned only to a single term
-chord <- chord_dat(circ, EC$genes, EC$process, limit = c(1,0))
-
-# Excluding terms with a count smaller than 5
-chord <- chord_dat(circ, EC$genes, EC$process, limit = c(0,5))
 
 }
 }

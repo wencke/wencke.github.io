@@ -5,7 +5,7 @@
 \title{Displays the relationship between genes and terms.}
 \usage{
 GOChord(data, title, space, gene.order, gene.size, gene.space, nlfc = 1,
-  lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label)
+  lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label, limit)
 }
 \arguments{
 \item{data}{The matrix represents the binary relation (1= is related to, 0=
@@ -38,6 +38,10 @@ c(color for low values, color for the mid point, color for the high values)}
 \item{border.size}{Defines the size of the ribbon borders}
 
 \item{process.label}{The size of the legend entries}
+
+\item{limit}{A vector with two cutoff values (default= c(0,0)). The first
+value defines the minimum number of terms a gene has to be assigned to. The
+second the minimum number of genes assigned to a selected term.}
 }
 \description{
 The GOChord function generates a circularly composited overview
@@ -62,16 +66,19 @@ The \code{gene.order} argument has three possible options: "logFC",
 }
 \examples{
 \dontrun{
-#Load the included dataset
+# Load the included dataset
 data(EC)
 
-#Generating the binary matrix
+# Generating the binary matrix
 chord<-chord_dat(circ,EC$genes,EC$process)
 
-#Creating the chord plot
+# Creating the chord plot
 GOChord(chord)
 
-#Creating the chord plot genes ordered by logFC and a different logFC color scale
+# Excluding process with less than 5 assigned genes
+GOChord(chord, limit = c(0,5))
+
+# Creating the chord plot genes ordered by logFC and a different logFC color scale
 GOChord(chord,space=0.02,gene.order='logFC',lfc.col=c('red','black','cyan'))
 }
 }

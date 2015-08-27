@@ -189,12 +189,6 @@ circle_dat <- function(terms, genes){
 #' # Building the binary matrix
 #' chord <- chord_dat(circ, EC$genes, EC$process)
 #' 
-#' # Excluding genes which are assigned only to a single term
-#' chord <- chord_dat(circ, EC$genes, EC$process, limit = c(1,0))
-#' 
-#' # Excluding terms with a count smaller than 5
-#' chord <- chord_dat(circ, EC$genes, EC$process, limit = c(0,5))
-#' 
 #' }
 #' @export
 
