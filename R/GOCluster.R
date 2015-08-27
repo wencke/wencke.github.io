@@ -59,7 +59,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   if (missing(metric)) metric<-'euclidean'
   if (missing(clust)) clust<-'average'
   if (missing(clust.by)) clust.by<-'term'
-  if (missing(nlfc)) nlfc <- F
+  if (missing(nlfc)) nlfc <- 0
   if (missing(lfc.col)) lfc.col<-c('firebrick1','white','dodgerblue')
   if (missing(lfc.min)) lfc.min <- -3
   if (missing(lfc.max)) lfc.max <- 3
@@ -69,12 +69,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   if (missing(term.space)) term.space<- lfc.space+lfc.width else term.space<-term.space*(-1)+lfc.width
   if (missing(term.width)) term.width<- 2*lfc.width+term.space else term.width<-term.width*(-1)+term.space
   
-  if (nlfc){
-    colnames(data)[1:3] <- c('genes','term','logFC')
-    chord <- chord_dat(data[,1:3], process = process)
-  }else{
-    chord <- chord_dat(data = data, process = process)
-  }
+
   if (clust.by=='logFC') distance <- stats::dist(chord[,dim(chord)[2]], method=metric)
   if (clust.by=='term') distance <- stats::dist(chord, method=metric)
   cluster <- stats::hclust(distance, method=clust)
@@ -132,6 +127,23 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
     
 }
 
+#' Check binary matrix
+#'
+#' @name check_chord
+#' @param data membership matrix; columns are terms, rows are genes
+#' 
+
+check_chord <- function(mat, limit){
+  
+  if(all(colSums(mat) >= limit[2]) & all(rowSums(mat) >= limit[1])) return(mat)
+  
+  tmp <- mat[(rowSums(mat) >= limit[1]),]
+  mat <- tmp[,(colSums(tmp) >= limit[2])]
+  
+  mat <- check_chord(mat, limit)
+  return(mat)
+}
+
 #' 
 #' @name GOChord
 #' @title Displays the relationship between genes and terms.
@@ -158,6 +170,9 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
 #' @param ribbon.col The background color of the ribbons
 #' @param border.size Defines the size of the ribbon borders
 #' @param process.label The size of the legend entries
+#' @param limit A vector with two cutoff values (default= c(0,0)). The first 
+#'   value defines the minimum number of terms a gene has to be assigned to. The
+#'   second the minimum number of genes assigned to a selected term.
 #' @details The \code{gene.order} argument has three possible options: "logFC", 
 #'   "alphabetical", "none". Actually, the options are quite self- explanatory.
 #'   
@@ -187,7 +202,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
 #' }
 #' @export
 
-GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc = 1, lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label){
+GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc = 1, lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label, limit){
   y <- id <- xpro <- ypro <- xgen <- ygen <- lx <- ly <- ID <- logFC <- NULL
   Ncol <- dim(data)[2]
   
@@ -199,24 +214,25 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   if (missing(lfc.col)) lfc.col <- c('brown1', 'azure', 'cornflowerblue')
   if (missing(lfc.min)) lfc.min <- -3
   if (missing(lfc.max)) lfc.max <- 3
-  if (missing(ribbon.col)) colRib <- grDevices::rainbow(Ncol - nlfc) else colRib <- ribbon.col
   if (missing(border.size)) border.size <- 0.5
   if (missing (process.label)) process.label <- 11
+  if (missing(limit)) limit <- c(0, 0)
   
   if (gene.order == 'logFC') data <- data[order(data[, Ncol], decreasing = T), ]
   if (gene.order == 'alphabetical') data <- data[order(rownames(data)), ]
   if (sum(!is.na(match(colnames(data), 'logFC'))) > 0){
     if (nlfc == 1){
-      cdata <- data[, 1:(Ncol - 1)]
-      lfc <-data[, Ncol]
+      cdata <- check_chord(data[, 1:(Ncol - 1)], limit)
+      lfc <- sapply(rownames(cdata), function(x) data[match(x,rownames(data)), Ncol])
     }else{
-      cdata <- data[, 1:(Ncol - nlfc)]
-      lfc <- data[, (Ncol - nlfc + 1)]
+      cdata <- check_chord(data[, 1:(Ncol - nlfc)], limit)
+      lfc <- sapply(rownames(cdata), function(x) data[, (Ncol - nlfc + 1)])
     }
   }else{
-    cdata <- data
+    cdata <- check_chord(data, limit)
     lfc <- 0
   }
+  if (missing(ribbon.col)) colRib <- grDevices::rainbow(dim(cdata)[2]) else colRib <- ribbon.col
   nrib <- colSums(cdata)
   ngen <- rowSums(cdata)
   Ncol <- dim(cdata)[2]
