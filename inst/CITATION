@@ -1,0 +1,13 @@
+citHeader("To cite GOplot in publications use:")
+
+citEntry(entry = "Article",
+  title = "GOplot: an R package for visually combining expression data with functional analysis",
+  author = personList(as.person("Wencke Walter"), as.person("Fatima Sanchez-Cabo"),
+                      as.person("Mercedes Ricote")),
+  journal = "Bioinformatics",
+  year = "2015",
+
+  textVersion = paste("Walter, Wencke, Fatima Sanchez-Cabo, and Mercedes Ricote.", 
+                      "GOplot: an R package for visually combining expression data with functional analysis.",
+                      "Bioinformatics (2015): btv300.")
+)
