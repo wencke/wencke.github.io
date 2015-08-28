@@ -165,16 +165,7 @@ circle_dat <- function(terms, genes){
 #'   for gene ID and logFC.
 #' @details If more than one logFC value for each gene is at disposal, only one 
 #'   should be used to create the binary matrix. The other values have to be 
-#'   added manually later. The parameter \code{limit} can be used to reduce the 
-#'   dimension of the calculated matrix. This might be useful to represent the 
-#'   data more clearly with \code{GOChord} later on. The first value of the 
-#'   vector defines the threshold for the minimum number of terms a gene has to 
-#'   be assigned to in order to be represented in the plot. Most of the time it 
-#'   is more meaningful to represent genes with various functions. A value of 3 
-#'   excludes all genes with less than three term assignments. Whereas the 
-#'   second value of the parameter restricts the number of terms according to 
-#'   the number of assigned genes. All terms with a count smaller or equal to 
-#'   the threshold are excluded.
+#'   added manually later. 
 #' @param process A character vector of selected processes
 #' @return A binary matrix
 #' @seealso \code{\link{GOChord}}

@@ -63,6 +63,16 @@ The \code{gene.order} argument has three possible options: "logFC",
   used. It is a numeric value and it defines the number of logFC columns
   within the binary membership matrix. The default is "1" assuming that most
   of the time only one contrast is considered.
+  The parameter \code{limit} can be used to reduce the
+  dimension of the calculated matrix. This might be useful to represent the
+  data more clearly with \code{GOChord} later on. The first value of the
+  vector defines the threshold for the minimum number of terms a gene has to
+  be assigned to in order to be represented in the plot. Most of the time it
+  is more meaningful to represent genes with various functions. A value of 3
+  excludes all genes with less than three term assignments. Whereas the
+  second value of the parameter restricts the number of terms according to
+  the number of assigned genes. All terms with a count smaller or equal to
+  the threshold are excluded.
 }
 \examples{
 \dontrun{
