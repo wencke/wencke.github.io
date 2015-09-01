@@ -196,17 +196,17 @@ table th {
   	border-style: inset;
 }
 
-table, table th, table td {
-  border-left-style: none;
-  border-right-style: none;
-}
-
 table td {
   	padding: 5px 5px;
   	border-width: 1px;
   	border-style: inset;
   	line-height: 18px;
  }
+
+table, table th, table td {
+  border-left-style: none;
+  border-right-style: none;
+}
 
 table tr.odd{
 	background-color: #E5E4E2;
