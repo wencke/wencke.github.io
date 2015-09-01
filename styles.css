@@ -182,16 +182,19 @@ pre {
 table {
 	margin: auto;
 	min-width: 40%;
-  	border: 1px solid #ccc;
-	text-align: left;
- }
+	border-width: 1px;
+	border-color: #DDDDDD;
+	border-style: outset;
+	border-collapse: collapse;
+}
 
 table th {
-  	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 18px;
 	font-weight: normal;
+	border-width: 2px;
   	padding: 5px;
- }
+  	border-style: inset;
+}
 
 table, table th, table td {
   border-left-style: none;
