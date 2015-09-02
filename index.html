@@ -10,7 +10,7 @@
 
 <meta name="author" content="Wencke Walter" />
 
-<meta name="date" content="2015-09-01" />
+<meta name="date" content="2015-09-02" />
 
 <title>GOplot</title>
 
@@ -25,11 +25,15 @@
 <div id="header">
 <h1 class="title">GOplot</h1>
 <h3 class="author"><em>Wencke Walter</em></h4>
-<h4 class="date"><em>2015-09-01</em></h4>
+<h4 class="date"><em>2015-09-02</em></h4>
 </div>
 
 
 <p>A manual to exploit the possibilities and limitations of the R package GOplot.</p>
+<div id="news" class="section level2">
+  <h2>NEWS</h2>
+  <p>Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor</a></em> I implemented a new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
+</div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Installation of the latest released version</span>
@@ -238,6 +242,17 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span clas
 <p>Sometimes the plot gets a bit crowded and you would like to reduce the number of displayed genes or processes. You can do this automatically by making use of the <em>limit</em> argument. Limit is a vector with two cutoff values (default = c(0, 0)). The first value defines the minimum (>=) number of terms a gene has to be assigned to. The second value determines the number of genes assigned to a selected term. For example, to display only genes which are assigned to at least three processes you would use the following line of code (output not shown):</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Display only genes which are assigned to at least three processes</span>
 <span class="kw">GOChord</span>(chord, <span class="dt">limit =</span> <span class="fl">c(3, 0)</span>, <span class="dt">gene.order =</span> <span class="st">'logFC'</span>)</code></pre>
+</div>
+<div id="heatmap-of-genes-and-terms-goheat" class="section level3">
+<h3>Heatmap of genes and terms (GOHeat)</h3>
+<p>The GOHeat function generates a heatmap of the relationship between genes and terms similar to <em>GOChord</em>. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the coloring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the <em>nlfc</em> argument. If <em>nlfc = 0</em>, so no logFC values are available, the coloring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First, we use the chord object without logFC column to create the heatmap</span>
+<span class="kw">GOHeat</span>(chord[,-8], <span class="dt">nlfc =</span> <span class="fl">0</span>)</code></pre>
+<p><img src="vignettes/GOHeat_nolfc.png" /></p>
+<p>In case of <em>nlfc = 1</em> the color corresponds to the logFC of the gene...</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we create the heatmap with logFC values and user-defined color scale</span>
+<span class="kw">GOHeat</span>(chord, <span class="dt">nlfc =</span> <span class="fl">1</span>, <span class="dt">fill.col =</span> <span class="dt">c('red', 'yellow', 'green')</span>)</code></pre>
+<p><img src="vignettes/GOHeat_lfc.png" /></p>
 </div>
 <div id="golden-eye-gocluster" class="section level3">
 <h3>Golden eye (GOCluster)</h3>

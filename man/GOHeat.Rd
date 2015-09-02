@@ -16,8 +16,9 @@ is not related to) between a set of genes (rows) and processes (columns)}
 }
 \description{
 The GOHeat function generates a heatmap of the relationship
-  between genes and terms. Genes are clustered according to their membership
-  and (if present) logFC. The input can be generated with the
+  between genes and terms. Biological processes are displayed in rows and
+  genes in columns. In addition genes are clustered to highlight groups of
+  genes with similar annotated functions. The input can be generated with the
   \code{\link{chord_dat}} function.
 }
 \details{
