@@ -54,25 +54,26 @@ The GOChord function generates a circularly composited overview
 
 
 The \code{gene.order} argument has three possible options: "logFC",
-  "alphabetical", "none". Actually, the options are quite self- explanatory.
+  "alphabetical", "none", which are quite self- explanatory.
 
-  Another argument which needs a bit more explanation is \code{nlfc}.
-  Differential expression analysis can be performed for multiple conditions
-  and/or batches. Therefore, the data frame contains more than one logFC
-  value per gene. To adjust to this situation the \code{nlfc} argument is
-  used. It is a numeric value and it defines the number of logFC columns
-  within the binary membership matrix. The default is "1" assuming that most
-  of the time only one contrast is considered.
-  The parameter \code{limit} can be used to reduce the
-  dimension of the calculated matrix. This might be useful to represent the
-  data more clearly with \code{GOChord} later on. The first value of the
-  vector defines the threshold for the minimum number of terms a gene has to
-  be assigned to in order to be represented in the plot. Most of the time it
-  is more meaningful to represent genes with various functions. A value of 3
-  excludes all genes with less than three term assignments. Whereas the
-  second value of the parameter restricts the number of terms according to
-  the number of assigned genes. All terms with a count smaller or equal to
-  the threshold are excluded.
+  Maybe the most important argument of the function is \code{nlfc}.If your
+  \code{data} does not contain a column of logFC values you have to set
+  \code{nlfc = 0}. Differential expression analysis can be performed for
+  multiple conditions and/or batches. Therefore, the data frame might contain
+  more than one logFC value per gene. To adjust to this situation the
+  \code{nlfc} argument is used as well. It is a numeric value and it defines
+  the number of logFC columns of your \code{data}. The default is "1"
+  assuming that most of the time only one contrast is considered.
+
+  To represent the data more useful it might be necessary to reduce the
+  dimension of \code{data}. This can be achieved with \code{limit}. The first
+  value of the vector defines the threshold for the minimum number of terms a
+  gene has to be assigned to in order to be represented in the plot. Most of
+  the time it is more meaningful to represent genes with various functions. A
+  value of 3 excludes all genes with less than three term assignments.
+  Whereas the second value of the parameter restricts the number of terms
+  according to the number of assigned genes. All terms with a count smaller
+  or equal to the threshold are excluded.
 }
 \examples{
 \dontrun{
