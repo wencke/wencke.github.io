@@ -20,16 +20,27 @@
 
 <body>
 
-
-
-<div id="header">
-<h1 class="title">GOplot</h1>
-<h3 class="author"><em>Wencke Walter</em></h4>
-<h4 class="date"><em>2015-09-02</em></h4>
+<div class="top">
+<h1>GOplot</h1>
+<p>A manual to exploit the possibilities and limitations of the R package GOplot.</p>
 </div>
 
+<div class="left">
+  <nav role="navigation" class="table-of-contents">
+  <h3>Plotting functions:</h3>
+  <ul>
+    <li><a href="#the-modified-barplot-gobar">GOBar</a></li>
+    <li><a href="#the-bubble-plot-gobubble">GOBubble</a></li>
+    <li><a href="#circular-visualization-of-the-results-of-gene-annotation-enrichment-analysis-gocircle">GOCircle</a></li>
+    <li><a href="#display-of-the-relationship-between-genes-and-terms-gochord">GOChord</a></li>
+    <li><a href="#heatmap-of-genes-and-terms-goheat">GOHeat</a></li>
+    <li><a href="#golden-eye-gocluster">GOCluster</a></li>
+    <li><a href="#venn-diagram-govenn">GOVenn</a></li>
+  </ul>
+</nav>
+</div>
 
-<p>A manual to exploit the possibilities and limitations of the R package GOplot.</p>
+<div class="main">
 <div id="news" class="section level2">
   <h2>NEWS</h2>
   <p>Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented a new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
@@ -286,6 +297,6 @@ l3 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<sp
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
-
+</div>
 </body>
 </html>
