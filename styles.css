@@ -35,6 +35,36 @@ body {
 	padding-right: 2em;
 }
 
+.top {
+    height: 92px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    /*background-color: #990000;*/
+    /*background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/0a/Kuhtai_Panorama_view.jpg)*/
+}
+
+.left {
+    width: 190px;
+    background-color:#450000;
+    margin-top: 2px;
+    color: white;
+    border:1px solid #000;
+    border-radius:4px;
+    float: left;
+}
+#left-p{
+  padding: 5px;
+  color: white;
+}
+
+.main {
+    width: auto;
+    margin-left: 190px;
+    /*margin-top: 100px;*/
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
 h1,h2, h3, h4, h5, h6 {
   color:#660000;
   margin:36px 0 10px;
@@ -102,11 +132,16 @@ strong {
 
 ul li {
   list-style: none;
+  padding-left:5px;
+}
+
+ul a{
+  color: white;
 }
 
 ol li {
-  list-style: decimal inside;
-  padding-left: 20px;
+  list-style: circle inside;
+  padding-left: 10px;
 }
 
 blockquote {
@@ -215,19 +250,4 @@ table tr.odd{
 	background-color: #E5E4E2;
 }
 
-.top {
-    height: 92px;
-    /*background-color: #990000;*/
-    /*background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/0a/Kuhtai_Panorama_view.jpg)*/
-}
-.left {
-    width: 180px;
-    margin-top: 8px;
-    float: left;
-}
-.main {
-    width: auto;
-    margin-left: 180px;
-    /*margin-top: 100px;*/
-    padding-right: 20px;
-}
+

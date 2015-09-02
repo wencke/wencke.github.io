@@ -26,8 +26,10 @@
 </div>
 
 <div class="left">
+  <h3 id="left-p">News</h3>
+  <p id="left-p">Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented a     new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
   <nav role="navigation" class="table-of-contents">
-  <h3>Plotting functions:</h3>
+  <h3 id="left-p">Navigation:</h3>
   <ul>
     <li><a href="#the-modified-barplot-gobar">GOBar</a></li>
     <li><a href="#the-bubble-plot-gobubble">GOBubble</a></li>
@@ -37,14 +39,12 @@
     <li><a href="#golden-eye-gocluster">GOCluster</a></li>
     <li><a href="#venn-diagram-govenn">GOVenn</a></li>
   </ul>
-</nav>
+  </nav>
+  <h3 id="left-p">Contact:</h3>
+  <p id="left-p">wencke.walter@arcor.de</p>
 </div>
 
 <div class="main">
-<div id="news" class="section level2">
-  <h2>NEWS</h2>
-  <p>Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented a new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
-</div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Installation of the latest released version</span>
@@ -138,7 +138,7 @@
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the plotting object</span>
 circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, EC$genelist)</code></pre>
 <p>The <strong>circ</strong> object has eight columns with the following names:</p>
-<ul>
+<ol>
 <li>category</li>
 <li>ID</li>
 <li>term</li>
@@ -147,7 +147,7 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 <li>logFC</li>
 <li>adj_pval</li>
 <li>zscore</li>
-</ul>
+</ol>
 <p>Since most of the gene- annotation enrichment analysis are based on the gene ontology database the package was build with this structure in mind, but is not restricted to it. As explained by <em><a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651">Ashburner et al.</a></em> in their paper from the year 2000, gene ontology is structured as an acyclic graph and it provides terms covering different areas. These terms are grouped into three independent categories: BP (biological process), CC (cellular component) or MF (molecular function). The first column of the <strong>circ</strong> object contains this information, which was already given in the input. For more information on the structure of gene ontology, have a look at the documentation section of the gene ontology consortium <a href="http://geneontology.org/page/ontology-documentation">website</a>. All the terms from inside the gene ontology database come with a GO <strong>ID</strong> and a GO <strong>term</strong> description. The <strong>ID</strong> column of the circ object is optional. So in case you want to use a functional analysis tool that is not based on gene ontology you won’t have an <strong>ID</strong> column. The term description column does contain just that: a description of the term and the performance of the implemented functions does not depend on possible resemblance with gene ontology terms. <strong>Count</strong> is the number of genes assigned to a term. <strong>Gene</strong> names and their <strong>logFC</strong> are taken from the input list of selected genes. The significance of a term is indicated by the adjusted p-value (<strong>adj_pval</strong>). Terms with an adjusted p-value &lt; 0.05 are considered as significantly enriched and are more likely to provide reliable information. The last column contains the <strong>zscore</strong>. This z-score does not refer to the standard score from statistics, but is an easy to calculate value to give you a hint if the biological process (/molecular function/cellular components) is more likely to be decreased (negative value) or increased (positive value). It is calculated as follows:</p>
 <p><span class="math">\[zscore=\frac{(up-down)}{\sqrt{count}}\]</span></p>
 <p>Whereas <em>up</em> and <em>down</em> are the number of assigned genes up-regulated (logFC&gt;0) in the data or down- regulated (logFC&lt;0), respectively.</p>
