@@ -36,11 +36,20 @@ body {
 }
 
 .top {
-    height: 92px;
+    height: 160px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
     /*background-color: #990000;*/
-    /*background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/0a/Kuhtai_Panorama_view.jpg)*/
+    /*background-image: vignettes/Titel.png*/
+}
+
+#logo{
+  position: relative;
+  max-width: 1000px;
+  max-height: 150px;
+  border: none;
+  padding: 5px;
+  margin: 0px;
 }
 
 .left {
@@ -230,8 +239,8 @@ table th {
 	font-size: 18px;
 	font-weight: normal;
 	border-width: 2px;
-  	padding: 5px;
-  	border-style: inset;
+  padding: 5px;
+  border-style: inset;
 }
 
 table td {
