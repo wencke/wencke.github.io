@@ -34,6 +34,7 @@
 #' 
 
 GOHeat <- function(data, nlfc, fill.col){
+  x <- y <- z <- NULL
   if(missing(nlfc)) nlfc <- 0 else nlfc <- nlfc
   if(missing(fill.col)) fill.col <- c('firebrick', 'white', 'dodgerblue') else fill.col <- fill.col
   

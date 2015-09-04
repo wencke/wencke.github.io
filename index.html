@@ -27,7 +27,7 @@
 <div class="left">
   <h3 id="left-p">News</h3>
   <p id="left-p">Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented a     new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
-  <nav role="navigation" class="table-of-contents">
+  <nav role="navigation">
   <h3 id="left-p">Navigation:</h3>
   <ul>
     <li><a href="#the-modified-barplot-gobar">GOBar</a></li>
@@ -157,6 +157,7 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 <h2>The plots</h2>
 <div id="the-modified-barplot-gobar" class="section level3">
 <h3>The modified barplot (GOBar)</h3>
+<a href="#installation">Go to top</a></li>
 <p>Since we do not really know what to expect from our data the aim of the first figure should be to display as many terms as possible without going too much into details. Nevertheless, the figure shall help us to pick the interesting and valuable terms. Therefore, we need to have some parameters to quantify the importance. Since the majority of scientific sampled data is plotted using bar charts a modified version of the normal barplot function, named <em>GOBar</em>, is included. The <em>GOBar</em> function allows the user to quickly create an appealing barplot.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate a simple barplot</span>
 <span class="kw">GOBar</span>(<span class="kw">subset</span>(circ, category ==<span class="st"> 'BP'</span>))</code></pre>
@@ -171,6 +172,7 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 </div>
 <div id="the-bubble-plot-gobubble" class="section level3">
 <h3>The bubble plot (GOBubble)</h3>
+<a href="#installation">Go to top</a></li>
 <p>The bubble plot is another possibility to get an overview of the enriched terms. The z-score is assigned to the x-axis and the negative logarithm of the adjusted p-value to the y-axis, as in the barplot (the higher the more significant). The area of the displayed circles is proportional to the number of genes (circ$count) assigned to the term and the color corresponds to the category. The help page of the plotting function (?GOBubble) lists all the arguments to change the layout of the plot. As a default the circles are labeled with the term ID. Therefore, a table connecting the IDs and terms is displayed on the right side by default. You can hide it by setting the argument <em>table.legend</em> to FALSE. If you want to display the term description instead set the argument <em>ID</em> to FALSE. Not all the circles are labeld due to the limited space and the overlap of the circles. A threshold for the labeling is set (default=5) based on the negative logarithm of the adjusted p-value.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Generate the bubble plot with a label threshold of 3</span>
 <span class="kw">GOBubble</span>(circ, <span class="dt">labels =</span> <span class="dv">3</span>)</code></pre>
@@ -184,6 +186,7 @@ circ &lt;-<span class="st"> </span><span class="kw">circle_dat</span>(EC$david, 
 </div>
 <div id="circular-visualization-of-the-results-of-gene-annotation-enrichment-analysis-gocircle" class="section level3">
 <h3>Circular visualization of the results of gene- annotation enrichment analysis (GOCircle)</h3>
+<a href="#installation">Go to top</a></li>
 <p>The overview plots shall help to decide which of the terms are the most interesting to us. Of course, this decision depends although on the hypothesis and ideas you want to confirm with your data. Not always are the most significant terms the ones you are interested in. So, after manually selecting a set of valuable terms (EC$process) the next figure should provide us with more details on this specific terms. One of the major issues we figured out by presenting the plots was: it was sometimes difficult to interpret the information the z-score provides. Since the measure is not that common. As shown above it is simply the number of up- regulated genes minus the number of down- regulated genes divided by the square root of the count. The <em>GOCircle</em> plot emphasizes this fact.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Generate a circular visualization of the results of gene- annotation enrichment analysis</span>
 <span class="kw">GOCircle</span>(circ)</code></pre>
@@ -199,6 +202,7 @@ IDs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'GO
 </div>
 <div id="display-of-the-relationship-between-genes-and-terms-gochord" class="section level3">
 <h3>Display of the relationship between genes and terms (GOChord)</h3>
+<a href="#installation">Go to top</a></li>
 <p>Based on the <strong><a href="http://circos.ca/">Circos</a></strong> plots designed by <em><a href="http://mkweb.bcgsc.ca/">Martin Krzywinski</a></em> the <em>GOChord</em> plotting function was implemented. It displays the relationship between a list of selected genes and terms, as well as the logFC of the genes. As an input a binary membership matrix is necessary. You can build the matrix on your own or you use the implemented function <em>chord_dat</em> which does the job for you. The function takes three arguments: <em>data</em>, <em>genes</em> and <em>process</em>, of which from the last two only one is mandatory. So, the <em>circle_dat</em> combined your expression data with the results from the functional analysis. The bar and bubble plot allowed you to get a first impression of your data and now, you selected a list of genes and processes you think are valuable. <em>GOCircle</em> adds a layer to display the expression values of the genes assigned to the terms, but it lacks the information of the relationship between the genes and the terms. It is not easy to figure out if some of the genes are linked to multiple processes. The chord plot fills the void left by <em>GOCircle</em>.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Define a list of genes which you think are interesting to look at. The item EC$genes of the toy </span>
 <span class="co"># sample contains the data frame of selected genes and their logFC. Have a look...</span>
@@ -257,6 +261,7 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span clas
 </div>
 <div id="heatmap-of-genes-and-terms-goheat" class="section level3">
 <h3>Heatmap of genes and terms (GOHeat)</h3>
+<a href="#installation">Go to top</a></li>
 <p>The GOHeat function generates a heatmap of the relationship between genes and terms similar to <em>GOChord</em>. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the coloring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the <em>nlfc</em> argument. If <em>nlfc = 0</em>, so no logFC values are available, the coloring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First, we use the chord object without logFC column to create the heatmap</span>
 <span class="kw">GOHeat</span>(chord[,-8], <span class="dt">nlfc =</span> <span class="fl">0</span>)</code></pre>
@@ -268,6 +273,7 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span clas
 </div>
 <div id="golden-eye-gocluster" class="section level3">
 <h3>Golden eye (GOCluster)</h3>
+<a href="#installation">Go to top</a></li>
 <p>The idea behind the <em>GOCluster</em> function is to visualize as much information as possible. Here is an example:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GOCluster</span>(circ, EC$process, <span class="dt">clust.by =</span> <span class="st">'logFC'</span>, <span class="dt">term.width =</span> <span class="dv">2</span>)</code></pre>
 <p><img src="vignettes/GOCluster.png" /></p>
@@ -277,6 +283,7 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span clas
 </div>
 <div id="venn-diagram-govenn" class="section level3">
 <h3>Venn diagram (GOVenn)</h3>
+<a href="#installation">Go to top</a></li>
 <p>In this biological context we implemented a Venn diagram that can be used to detect relations between various lists of differentially expressed genes or to explore the intersection of genes of multiple terms from the functional analysis. The Venn diagram does not only display the number of overlap genes, but it also displays the information about the gene expression patterns (commonly up- regulated, commonly down- regulated or contra- regulated). At the moment, maximal three datasets are aloud as an input. The input data frame contains at least two columns: one for the gene names and one for the logFC value.</p>
 <pre class="sourceCode r"><code class="sourceCode r">l1 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'heart development'</span>, <span class="kw">c</span>(genes,logFC))
 l2 &lt;-<span class="st"> </span><span class="kw">subset</span>(circ, term ==<span class="st"> 'plasma membrane'</span>, <span class="kw">c</span>(genes,logFC))

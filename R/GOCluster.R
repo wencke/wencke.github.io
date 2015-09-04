@@ -127,24 +127,6 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
     
 }
 
-#' Check binary matrix
-#'
-#' @name check_chord
-#' @param data membership matrix; columns are terms, rows are genes
-#' @param limit vector of two cutoff values; first defines genes, second processes
-#' 
-
-check_chord <- function(mat, limit){
-  
-  if(all(colSums(mat) >= limit[2]) & all(rowSums(mat) >= limit[1])) return(mat)
-  
-  tmp <- mat[(rowSums(mat) >= limit[1]),]
-  mat <- tmp[,(colSums(tmp) >= limit[2])]
-  
-  mat <- check_chord(mat, limit)
-  return(mat)
-}
-
 #' 
 #' @name GOChord
 #' @title Displays the relationship between genes and terms.
