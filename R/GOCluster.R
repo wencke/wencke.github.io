@@ -116,7 +116,7 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   ggplot()+
     geom_segment(data=segment(dendr), aes(x=x, y=y, xend=xend, yend=yend))+
     geom_rect(data=lfc,aes(xmin=x-0.5,xmax=x+0.5,ymin=width,ymax=space,fill=logFC))+
-    scale_fill_gradient2('logFC',low=lfc.col[3],mid=lfc.col[2],high=lfc.col[1],guide=guide_colorbar(title.position='top',title.hjust=0.5),breaks=c(min(lfc$logFC),max(lfc$logFC)),labels=c(round(min(lfc$logFC)),round(max(lfc$logFC))))+
+    scale_fill_gradient2('logFC', space = 'Lab', low=lfc.col[3],mid=lfc.col[2],high=lfc.col[1],guide=guide_colorbar(title.position='top',title.hjust=0.5),breaks=c(min(lfc$logFC),max(lfc$logFC)),labels=c(round(min(lfc$logFC)),round(max(lfc$logFC))))+
     geom_rect(data=term_rect,aes(xmin=x-0.5,xmax=x+0.5,ymin=width,ymax=space),fill=term_rect$col)+
     geom_point(data=legend,aes(x=x,y=0.1,size=factor(label,levels=label),shape=NA))+
     guides(size=guide_legend("GO Terms",ncol=4,byrow=T,override.aes=list(shape=22,fill=term.col,size = 8)))+
@@ -322,7 +322,7 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   
   if (nlfc >= 1){
     g + geom_polygon(data = df_genes, aes(x, y, group = id, fill = logFC), inherit.aes = F, color = 'black') +
-      scale_fill_gradient2('logFC', low = lfc.col[3], mid = lfc.col[2], high = lfc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
+      scale_fill_gradient2('logFC', space = 'Lab', low = lfc.col[3], mid = lfc.col[2], high = lfc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(df_genes$logFC), max(df_genes$logFC)), labels = c(round(min(df_genes$logFC)), round(max(df_genes$logFC)))) +
       theme(legend.position = 'bottom', legend.background = element_rect(fill = 'transparent'), legend.box = 'horizontal', legend.direction = 'horizontal')
   }else{

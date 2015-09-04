@@ -320,7 +320,7 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
     leg <- theme(legend.position = 'bottom')
     g <-  ggplot(sub, aes(x = factor(id, levels = stats::reorder(id, adj_pval)), y = adj_pval, fill = zscore)) +
       geom_bar(stat = 'identity', color = 'black') +
-      scale_fill_gradient2('z-score', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
+      scale_fill_gradient2('z-score', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(sub$zscore), max(sub$zscore)), labels = c('decreasing', 'increasing')) +
       labs(title = title, x = '', y = '-log (adj p-value)') +
       leg
@@ -330,7 +330,7 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
                  legend.box = 'vertical', legend.direction = 'horizontal')
     g <-  ggplot(sub, aes( x = factor(id, levels = reorder(id, adj_pval)), y = zscore, fill = adj_pval)) +
       geom_bar(stat = 'identity', color = 'black') +
-      scale_fill_gradient2('Significance', guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
+      scale_fill_gradient2('Significance', space = 'Lab', guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
       labs(title = title, x = '', y = 'z-score') +
       leg
   }
@@ -459,7 +459,7 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
     ylim(1, rad2 + 1.6) +
     xlim(0, 10) +
     theme_blank +
-    scale_fill_gradient2('z-score', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(df$zscore), max(df$zscore)),labels = c('decreasing', 'increasing')) +
+    scale_fill_gradient2('z-score', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(df$zscore), max(df$zscore)),labels = c('decreasing', 'increasing')) +
     theme(legend.position = 'bottom', legend.background = element_rect(fill = 'transparent'), legend.box = 'horizontal', legend.direction = 'horizontal') +	
     geom_point(data = dfp, aes(x = logx, y = logy2 + logy), pch = 21, fill = 'transparent', color = 'black', size = 3)+
     geom_point(data = dfp, aes(x = logx, y = logy2 + logy, color = logFC), size = 2.5)+

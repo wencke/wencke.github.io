@@ -65,9 +65,9 @@ GOHeat <- function(data, nlfc, fill.col){
               axis.text.y = element_text(size = 14), panel.background=element_blank(), panel.grid.major=element_blank(),
               panel.grid.minor=element_blank())
   if(nlfc == 0){
-    g + scale_fill_gradient2('Count',low=fill.col[2], mid=fill.col[3], high=fill.col[1])
+    g + scale_fill_gradient2('Count', space = 'Lab', low=fill.col[2], mid=fill.col[3], high=fill.col[1])
   }else{
-    g + scale_fill_gradient2('logFC',low=fill.col[3], mid=fill.col[2], high=fill.col[1])
+    g + scale_fill_gradient2('logFC', space = 'Lab', low=fill.col[3], mid=fill.col[2], high=fill.col[1])
   }
 }
 
