@@ -39,7 +39,7 @@ data(EC)
 circ <- circle_dat(EC$david, EC$genelist)
 
 # Generate the chord object
-chord <- chord_dat(chord, EC$genes, EC$process)
+chord <- chord_dat(circ, EC$genes, EC$process)
 
 # Create the plot with user-defined colors
 GOHeat(chord, nlfc = 1, fill.col = c('red', 'yellow', 'green'))
