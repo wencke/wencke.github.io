@@ -9,16 +9,16 @@ theme_blank <- theme(axis.line = element_blank(), axis.text.x = element_blank(),
                      panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())
 
 # Draw adjacent table for GOBubble and GOCircle
-draw_table <- function(data, col = ''){
+draw_table <- function(data, col){
   id <- term <- NULL
   colnames(data) <- tolower(colnames(data))
-  if (length(col) == 1){
+  if (missing(col)){
     tt1 <- ttheme_default()
   }else{
     text.col <- c(rep(col[1], sum(data$category == 'BP')), rep(col[2], sum(data$category == 'CC')), rep(col[3], sum(data$category == 'MF')))
     tt1 <- ttheme_minimal(core=list(fg.par = list(size = 4), bg.par = list(fill = text.col, col=NA, alpha= 1/3)), colhead=list(fg.par=list(col="black")))
   }
-  table <- tableGrob(subset(data, select = c(id, term)), cols = c('ID', 'Describtion'), rows = NULL, theme = tt1)
+  table <- tableGrob(subset(data, select = c(id, term)), cols = c('ID', 'Description'), rows = NULL, theme = tt1)
   return(table)
 }
 
