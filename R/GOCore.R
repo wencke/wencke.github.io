@@ -242,27 +242,31 @@ GOBubble <- function(data, display, title, color, labels, ID = T, table.legend =
   if (display == 'single'){
     g <- g + scale_colour_manual('Category', values = cols, labels = c('Biological Process', 'Cellular Component', 'Molecular Function'))+
       theme(legend.position = 'bottom')+
-      annotate ("text", x = min(sub$zscore), y = 1.5, label = "threshold", colour = "orange", size = 3)
+      annotate ("text", x = min(sub$zscore), y = 1.35, label = "threshold", colour = "orange", size = 3)
     if (ID) g <- g+ geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) else g <- g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 4)
     if (table.legend){
       if (table.col) table <- draw_table(sub2, col = cols) else table <- draw_table(sub2)
-      g <- g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
-                     panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank()) 
+      g <- g + theme(axis.text = element_text(size = 14), axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), 
+                     axis.title = element_text(size = 14, face = 'bold'), panel.background = element_blank(), panel.grid.minor = element_blank(), 
+                     panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank()) 
       graphics::par(mar = c(0.1, 0.1, 0.1, 0.1))
       grid.arrange(g, table, ncol = 2)
     }else{
-      g + theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.background = element_blank(),
-                panel.grid.minor = element_blank(), panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank())
+      g + theme(axis.text = element_text(size = 14), axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), 
+                axis.title = element_text(size = 14, face = 'bold'), panel.background = element_blank(), panel.grid.minor = element_blank(), 
+                panel.grid.major = element_line(color = 'grey80'), plot.background = element_blank())
     }
   }else{
     g <- g + facet_grid(.~category, space = 'free_x', scales = 'free_x') + scale_colour_manual(values = cols, guide ='none')
     if (ID) {
       g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) + 
-        theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
+        theme(axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), axis.line = element_line(color = 'grey80'), 
+              axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
               panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank()) 
     }else{
       g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 5) + 
-        theme(axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
+        theme(axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), axis.line = element_line(color = 'grey80'), 
+              axis.ticks = element_line(color = 'grey80'), panel.border = element_rect(fill = 'transparent', color = 'grey80'),
               panel.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank())
     }
   }
@@ -310,7 +314,7 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
   id <- adj_pval <- zscore <- NULL
   if (missing(display)) display <- 'single'
   if (missing(title)) title <- ''
-  if (missing(zsc.col)) zsc.col <- c('red', 'white', 'blue')
+  if (missing(zsc.col)) zsc.col <- c('firebrick1', 'white', 'dodgerblue1')
   colnames(data) <- tolower(colnames(data))
   data$adj_pval <- -log(data$adj_pval, 10)
   sub <- data[!duplicated(data$term), ]
@@ -330,18 +334,18 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
                  legend.box = 'vertical', legend.direction = 'horizontal')
     g <-  ggplot(sub, aes( x = factor(id, levels = reorder(id, adj_pval)), y = zscore, fill = adj_pval)) +
       geom_bar(stat = 'identity', color = 'black') +
-      scale_fill_gradient2('Significance', space = 'Lab', guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
+      scale_fill_gradient2('Significance', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
       labs(title = title, x = '', y = 'z-score') +
       leg
   }
   if (display == 'single'){
     g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'),
-              panel.background = element_blank(), panel.border = element_blank(), panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(), plot.background = element_blank())        
+              axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+              panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())        
   }else{
     g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(color = 'grey80'), axis.ticks = element_line(color = 'grey80'),
-              panel.background = element_blank(), panel.border = element_blank(), panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(), plot.background = element_blank())+
+              axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+              panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())+
       facet_grid(.~category, space = 'free_x', scales = 'free_x')
   }
 }
@@ -386,20 +390,23 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
 #' @seealso \code{\link{circle_dat}}, \code{\link{GOBar}}
 #' @examples
 #' \dontrun{
-#' #Load the included dataset
+#' # Load the included dataset
 #' data(EC)
 #' 
-#' #Building the circ object
-#' circ<-circular_dat(EC$david, EC$genelist)
+#' # Building the circ object
+#' circ <- circle_dat(EC$david, EC$genelist)
 #' 
-#' #Creating the circular plot
+#' # Creating the circular plot
 #' GOCircle(circ)
 #' 
-#' #Creating the circular plot with a different color scale
-#' GOCircle(circ,zsc.col=c('yellow','black','cyan'))
+#' # Creating the circular plot with a different color scale for the logFC
+#' GOCircle(circ, lfc.col = c('purple', 'orange'))
 #' 
-#' #Creating the circular plot with different font style
-#' GOCircle(circ,label.size=5,label.fontface='italic')
+#' # Creating the circular plot with a different color scale for the z-score
+#' GOCircle(circ, zsc.col = c('yellow', 'black', 'cyan'))
+#' 
+#' # Creating the circular plot with different font style
+#' GOCircle(circ, label.size = 5, label.fontface = 'italic')
 #' }
 #' @export
 

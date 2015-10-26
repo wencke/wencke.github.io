@@ -56,20 +56,23 @@ The outer circle shows a scatter plot for each term of the logFC of
 }
 \examples{
 \dontrun{
-#Load the included dataset
+# Load the included dataset
 data(EC)
 
-#Building the circ object
-circ<-circular_dat(EC$david, EC$genelist)
+# Building the circ object
+circ <- circle_dat(EC$david, EC$genelist)
 
-#Creating the circular plot
+# Creating the circular plot
 GOCircle(circ)
 
-#Creating the circular plot with a different color scale
-GOCircle(circ,zsc.col=c('yellow','black','cyan'))
+# Creating the circular plot with a different color scale for the logFC
+GOCircle(circ, lfc.col = c('purple', 'orange'))
 
-#Creating the circular plot with different font style
-GOCircle(circ,label.size=5,label.fontface='italic')
+# Creating the circular plot with a different color scale for the z-score
+GOCircle(circ, zsc.col = c('yellow', 'black', 'cyan'))
+
+# Creating the circular plot with different font style
+GOCircle(circ, label.size = 5, label.fontface = 'italic')
 }
 }
 \seealso{
