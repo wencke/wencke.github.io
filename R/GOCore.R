@@ -443,7 +443,7 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   idx_term <- which(!duplicated(data$term) == T)
   xm <- c(); logs <- c()
   for (sc in 1:length(scount)){
-    idx <- c(idx_term[sc], idx_term[sc + 1] - 1)
+    idx <- c(idx_term[sc], idx_term[sc] + scount[sc] -1)
     val <- stats::runif(scount[sc], df$x[sc] + 0.06, (df$x[sc] + df$xmax[sc] - 0.06))
     xm <- c(xm, val)
     r_logFC <- round(range(data$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
