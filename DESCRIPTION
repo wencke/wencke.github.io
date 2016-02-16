@@ -3,8 +3,10 @@ Type: Package
 Title: Visualization of Functional Analysis Data
 Version: 1.0.2
 Date: 2016-02-16
-Author: Wencke Walter, Fatima Sanchez-Cabo
-Maintainer: Wencke Walter <wencke.walter@arcor.de>
+Authors@R: c(
+    person("Wencke", "Walter", , email = "wencke.walter@arcor.de", role = c("aut", "cre")),
+    person("Fatima", "Sanchez-Cabo", , role = "aut")
+    )
 URL: https://github.com/wencke/wencke.github.io
 BugReports: https://github.com/wencke/wencke.github.io/issues
 Description: Implementation of multilayered visualizations for enhanced
@@ -14,7 +16,7 @@ Description: Implementation of multilayered visualizations for enhanced
     structure in mind: starting from a general overview to identify the most
     enriched categories (modified bar plot, bubble plot) to a more detailed one
     displaying different types of relevant information for the molecules in a given
-    set of categories (circle plot, chord plot, cluster plot, Venn diagram).
+    set of categories (circle plot, chord plot, cluster plot, Venn diagram, heatmap).
 Depends:
     ggplot2 (>= 2.0.0),
     ggdendro (>= 0.1-17),
