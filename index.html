@@ -26,7 +26,7 @@
 
 <div class="left">
   <h3 id="left-p">News</h3>
-  <p id="left-p">Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented a     new function: GOHeat. The function creates a heatmap displaying the relationship between genes and terms similar to <em>GOChord</em>. Due to the coloring of the ribbons <em>GOChord</em> can only display a limited number of biological processes. GOHeat overcomes this limitation! For further details see below.</p>
+  <p id="left-p"> There seem to be some problems with the GOplot version on CRAN. I will upload a new version of the package within the next days and I apologise for any inconvenience.</p>
   <nav role="navigation">
   <h3 id="left-p">Navigation:</h3>
   <ul>
@@ -262,7 +262,7 @@ chord &lt;-<span class="st"> </span><span class="kw">chord_dat</span>(<span clas
 <div id="heatmap-of-genes-and-terms-goheat" class="section level3">
 <h3>Heatmap of genes and terms (GOHeat)</h3>
 <a href="#installation">Go to top</a></li>
-<p>The GOHeat function generates a heatmap of the relationship between genes and terms similar to <em>GOChord</em>. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the coloring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the <em>nlfc</em> argument. If <em>nlfc = 0</em>, so no logFC values are available, the coloring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...</p>
+<p>Thanks to a very nice suggestion from <em><a href="http://sartorlab.ccmb.med.umich.edu/">Maureen Sartor, Ph.D.</a></em> I implemented: GOHeat. The GOHeat function generates a heatmap of the relationship between genes and terms similar to <em>GOChord</em>. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the coloring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the <em>nlfc</em> argument. If <em>nlfc = 0</em>, so no logFC values are available, the coloring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First, we use the chord object without logFC column to create the heatmap</span>
 <span class="kw">GOHeat</span>(chord[,-8], <span class="dt">nlfc =</span> <span class="fl">0</span>)</code></pre>
 <p><img src="vignettes/GOHeat_nolfc.png" /></p>
