@@ -1,5 +1,5 @@
 ---
-title: "GOplot 1.0"
+title: "GOplot 1.0.2"
 author: "Fatima Sanchez Cabo & Wencke Walter"
 date: "`r Sys.Date()`"
 output: 
@@ -105,7 +105,7 @@ To add a title, change the color of the circles, facet the plot and to change th
 
 ```{r GOBubble2, warning = FALSE, message = FALSE, fig.keep = 'none'}
 # Add a title, change the color of the circles, facet the plot according to the categories and change the label threshold
-GOBubble(circ, title = 'Bubble plot', color = c('deeppink', 'blue', 'chartreuse1'), display = 'multiple', labels = 3)
+GOBubble(circ, title = 'Bubble plot', colour = c('deeppink', 'blue', 'chartreuse1'), display = 'multiple', labels = 3)
 ```
 
 ![GOBubble2.](GOBubble2.png)
