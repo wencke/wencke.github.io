@@ -15,4 +15,4 @@ For preprocessing: circle_dat(), chord_dat() and reduce_overlap()
 
 For plotting: GOBubble(), GOBar(), GOChord(), GOCluster(), GOCircle(), GOVenn(), GOHeat()
 
-A manual can be found on the website https://wencke.github.io/
+A manual can be found on the website https://GOplot.github.io/
