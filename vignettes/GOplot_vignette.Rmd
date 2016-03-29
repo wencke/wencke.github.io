@@ -1,12 +1,12 @@
 ---
 title: "GOplot 1.0.2"
-author: "Fatima Sanchez Cabo & Wencke Walter"
+author: "Wencke Walter"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     css: GOplot.css
 vignette: >
-  %\VignetteIndexEntry{GOplot_0.1}
+  %\VignetteIndexEntry{GOplot_0.2}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
