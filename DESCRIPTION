@@ -2,7 +2,7 @@ Package: GOplot
 Type: Package
 Title: Visualization of Functional Analysis Data
 Version: 1.0.2
-Date: 2016-03-28
+Date: 2016-03-29
 Authors@R: c(
     person("Wencke", "Walter", , email = "wencke.walter@arcor.de", role = c("aut", "cre")),
     person("Fatima", "Sanchez-Cabo", , role = "aut")

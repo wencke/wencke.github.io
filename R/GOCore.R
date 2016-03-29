@@ -198,8 +198,8 @@ chord_dat <- function(data, genes, process){
 #' @export
 
 reduce_overlap <- function(data, overlap){
+  term <- genes <- NULL
   if (missing(overlap)) overlap <- 0.75
-  terms <- genes <- NULL
   terms <- unique(data$term)
   FUN <- function(x,y) round(sum(x$genes %in% y$genes)/nrow(x), digits = 2)
   tmp <- matrix(0, ncol = length(terms), nrow = length(terms), dimnames = list(terms, terms))
