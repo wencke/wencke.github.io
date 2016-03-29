@@ -402,10 +402,8 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
               axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
               panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())        
   }else{
-    dummy_col <- data.frame(category = c('BP', 'CC', 'MF'), adj_pval = sub$adj_pval[1:3], zscore = sub$zscore[1:3], size = 1:3, count = 1:3)
-    g + geom_rect(data = dummy_col, aes(fill = category), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, alpha = 0.2)+
-      facet_grid(.~category, space = 'free_x', scales = 'free_x')+
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
+    g + facet_grid(.~category, space = 'free_x', scales = 'free_x')+
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
             axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
             panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())
   }
