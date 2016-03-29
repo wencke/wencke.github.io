@@ -176,9 +176,9 @@ chord_dat <- function(data, genes, process){
 #' @title Eliminates redundant terms.
 #' @description The function eliminates all terms with a gene overlap >= set
 #'   threshold (\code{overlap}) The reduced dataset can be used to improve the
-#'   readability of plots such as \code{GOBubble}, \code{GOBar}
+#'   readability of plots such as \code{GOBubble} and \code{GOBar}
 #' @param data A data frame created with \code{circle_dat}.
-#' @param overlap Skalar indicating the threshold for gene overlap.
+#' @param overlap Skalar indicating the threshold for gene overlap (default = 0.75).
 #' @details The function is currently very slow.
 #' @examples
 #' \dontrun{
@@ -198,6 +198,7 @@ chord_dat <- function(data, genes, process){
 #' @export
 
 reduce_overlap <- function(data, overlap){
+  if (missing(overlap)) overlap <- 0.75
   terms <- genes <- NULL
   terms <- unique(data$term)
   FUN <- function(x,y) round(sum(x$genes %in% y$genes)/nrow(x), digits = 2)
@@ -532,7 +533,7 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
     scale_colour_manual(values = lfc.col, guide = guide_legend(title.position = "top", title.hjust = 0.5))		
   
   if (table.legend){
-    table <- draw_table(suby, col = 'black')
+    table <- draw_table(suby)
     graphics::par(mar = c(0.1, 0.1, 0.1, 0.1))
     grid.arrange(c, table, ncol = 2)
   }else{

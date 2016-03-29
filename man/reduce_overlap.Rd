@@ -9,12 +9,12 @@ reduce_overlap(data, overlap)
 \arguments{
 \item{data}{A data frame created with \code{circle_dat}.}
 
-\item{overlap}{Skalar indicating the threshold for gene overlap.}
+\item{overlap}{Skalar indicating the threshold for gene overlap (default = 0.75).}
 }
 \description{
 The function eliminates all terms with a gene overlap >= set
   threshold (\code{overlap}) The reduced dataset can be used to improve the
-  readability of plots such as \code{GOBubble}, \code{GOBar}
+  readability of plots such as \code{GOBubble} and \code{GOBar}
 }
 \details{
 The function is currently very slow.
