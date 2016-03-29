@@ -121,7 +121,7 @@ GOBubble(circ, title = 'Bubble plot with background colour', display = 'multiple
 
 A new function, *reduce_overlap*, was included in the updated version of the package to reduce the number of redundant terms. So far, the implemented method is very simple + slow and needs further refinement. Nevertheless, by reducing the number of redundant terms the readability of plots, like the bubble plot, improves significantly. The function deletes all terms that have a gene overlap greater than or equal to a set threshold. The function keeps one term per group as a representative without taking into consideration the GO hierarchy.  
 
-```{r GOBubble4, warning = FALSE, message = FALSE, fig.keep = 'none'}
+```{r GOBubble4, warning = FALSE, message = FALSE, fig.keep = 'none', eval = FALSE}
 # Reduce redundant terms with a gene overlap >= 0.75...
 reduced_circ <- reduce_overlap(circ, overlap = 0.75)
 # ...and plot it
