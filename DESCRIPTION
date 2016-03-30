@@ -25,7 +25,8 @@ Depends:
     R (>= 3.2.3)
 License: GPL-2
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
 LazyData: TRUE
 RoxygenNote: 5.0.1
