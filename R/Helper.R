@@ -16,7 +16,9 @@ draw_table <- function(data, col){
     tt1 <- ttheme_default()
   }else{
     text.col <- c(rep(col[1], sum(data$category == 'BP')), rep(col[2], sum(data$category == 'CC')), rep(col[3], sum(data$category == 'MF')))
-    tt1 <- ttheme_minimal(core=list(fg.par = list(size = 4), bg.par = list(fill = text.col, col=NA, alpha= 1/3)), colhead=list(fg.par=list(col="black")))
+    tt1 <- ttheme_minimal(
+      core = list(bg_params = list(fill = text.col, col=NA, alpha= 1/3)), 
+      colhead = list(fg_params = list(col = "black")))
   }
   table <- tableGrob(subset(data, select = c(id, term)), cols = c('ID', 'Description'), rows = NULL, theme = tt1)
   return(table)

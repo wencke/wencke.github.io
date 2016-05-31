@@ -1,12 +1,15 @@
 ---
 title: "GOplot 1.1"
 author: "Fatima Sanchez Cabo & Wencke Walter"
+=======
+title: "GOplot 1.0.2"
+author: "Wencke Walter"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     css: GOplot.css
 vignette: >
-  %\VignetteIndexEntry{GOplot_0.1}
+  %\VignetteIndexEntry{GOplot_0.2}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -18,7 +21,7 @@ A manual to exploit the possibilities and limitations of the R package GOplot.
 The GOplot package concentrates on the visualization of biological data. More precisely, the package will help combine and integrate expression data with the results of a functional analysis. The package cannot be used to perform any of these analyses. It is for visualization purpose only. In all the scientific fields we visualize information to meet a basic need- to tell a story. Attributable to space restrictions and a general need to present everything neat and tidy most of the times it is simply not possible to actually tell a story. Therefore, we use vision to communicate information. A well designed and elaborated figure provides the beholder with high-dimensional information in a much smaller space than for example a table. The idea of the package is to provide the user with functions that allow a quick examination of large amounts of data, expose trends and find patterns & correlations within the data. Effective data visualization is an important tool in the decision making process and helps to find further pieces of the puzzle picturing the answer of your biological question. Based on that you will be able to confirm or falsify your hypotheses. You might even start to look in a different direction to investigate your topic relying on the insight a new visualization provides. The plotting functions of the package were developed with a hierarchical structure in mind; starting with a general overview and closing with definite subsets of selected genes and terms. To explain the idea let us use an example.
 
 ##The toy example
-GOplot comes with a manually compiled data set. Selected samples were downloaded from gene expression omnibus (accession number: [GSE47067](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE47067)). As a brief summary, the data set contains the transcriptomic information of endothelial cells from two steady state tissues (brain and heart). More detailed information can be found in the paper by *[Nolan et al. 2013](http://www.ncbi.nlm.nih.gov/pubmed/23871589)*. The data was normalized and a statistical analysis was performed to determine differentially expressed genes. [DAVID](http://david.abcc.ncifcrf.gov/) functional annotation tool was used to perform a gene- annotation enrichment analysis of the set of differentially expressed genes (adjusted p-value < 0.05). The data set contains the five following items:
+GOplot comes with a manually compiled data set. Selected samples were downloaded from gene expression omnibus (accession number: *[GSE47067](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE47067)*). As a brief summary, the data set contains the transcriptomic information of endothelial cells from two steady state tissues (brain and heart). More detailed information can be found in the paper by *[Nolan et al. 2013](http://www.ncbi.nlm.nih.gov/pubmed/23871589)*. The data was normalized and a statistical analysis was performed to determine differentially expressed genes. *DAVID* functional annotation tool was used to perform a gene- annotation enrichment analysis of the set of differentially expressed genes (adjusted p-value < 0.05). The data set contains the five following items:
 
 ```{r table1, echo = FALSE, results = 'asis'}
 toy<-data.frame(Name=c('EC$eset','EC$genelist','EC$david','EC$genes','EC$process'),Description=c('Data frame of normalized expression values of brain and heart endothelial cells (3 replicates)','Data frame of differentially expressed genes (adjusted p-value < 0.05)','Data frame of results from a functional analysis of the differentially expressed genes performed with DAVID','Data frame of selected genes with logFC','Character vector of selected enriched biological processes'),Dimension=c('20644 x 7','2039 x 7','174 x 5','37 x 2','7'))
@@ -80,17 +83,17 @@ On the y-axis the significance of the terms is shown and the bars are ordered ac
 GOBar(circ, display = 'multiple')
 ```
 
-To add a title use *title* and to change the color scale of the z-score use the argument *zsc.col* (output not shown).
+To add a title use *title* and to change the colour scale of the z-score use the argument *zsc.col* (output not shown).
 
 ```{r GOBar3, eval = FALSE, warning = FALSE, message = FALSE}
-# Facet the barplot, add a title and change the color scale for the z-score
-GOBar(circ, display = 'multiple', title = 'Z-score colored barplot', zsc.col = c('yellow', 'black', 'cyan'))
+# Facet the barplot, add a title and change the colour scale for the z-score
+GOBar(circ, display = 'multiple', title = 'Z-score coloured barplot', zsc.col = c('yellow', 'black', 'cyan'))
 ```
 
 Barplots are common and very easy to read, but they might not be the absolute solution. Another possibility to display an overview for high- dimensional data is the bubble plot. 
 
 ###The bubble plot (GOBubble)
-The bubble plot is another possibility to get an overview of the enriched terms. The z-score is assigned to the x-axis and the negative logarithm of the adjusted p-value to the y-axis, as in the barplot (the higher the more significant). The area of the displayed circles is proportional to the number of genes (circ$count) assigned to the term and the color corresponds to the category.
+The bubble plot is another possibility to get an overview of the enriched terms. The z-score is assigned to the x-axis and the negative logarithm of the adjusted p-value to the y-axis, as in the barplot (the higher the more significant). The area of the displayed circles is proportional to the number of genes (circ$count) assigned to the term and the colour corresponds to the category.
 The help page of the plotting function (?GOBubble) lists all the arguments to change the layout of the plot. As a default the circles are labeled with the term ID. Therefore, a table connecting the IDs and terms is displayed on the right side by default. You can hide it by setting the argument *table.legend* to FALSE. If you want to display the term description instead set the argument *ID* to FALSE. Not all the circles are labeld due to the limited space and the overlap of the circles. A threshold for the labeling is set (default=5) based on the negative logarithm of the adjusted p-value.
 
 
@@ -101,16 +104,34 @@ GOBubble(circ, labels = 3)
 
 ![GOBubble1.](GOBubble1.png)
 
-To add a title, change the color of the circles, facet the plot and to change the label threshold use the following arguments:
+To add a title, change the colour of the circles, facet the plot and to change the label threshold use the following arguments:
 
 ```{r GOBubble2, warning = FALSE, message = FALSE, fig.keep = 'none'}
-# Add a title, change the color of the circles, facet the plot according to the categories and change the label threshold
-GOBubble(circ, title = 'Bubble plot', color = c('deeppink', 'blue', 'chartreuse1'), display = 'multiple', labels = 3)
+# Add a title, change the colour of the circles, facet the plot according to the categories and change the label threshold
+GOBubble(circ, title = 'Bubble plot', colour = c('orange', 'darkred', 'gold'), display = 'multiple', labels = 3)
 ```
 
 ![GOBubble2.](GOBubble2.png)
 
-After this basic level of visualization the next figures will be more specific and concentrated on the terms of interest.  
+For the facet plot it is also possible to colour the background of the panels according to the displayed category by setting *bg.col* to TRUE.
+
+```{r GOBubble3, warning = FALSE, message = FALSE, fig.keep = 'none'}
+# Colour the background according to the category
+GOBubble(circ, title = 'Bubble plot with background colour', display = 'multiple', bg.col = T, labels = 3)
+```
+
+![GOBubble3.](GOBubble3.png)
+
+A new function, *reduce_overlap*, was included in the updated version of the package to reduce the number of redundant terms. So far, the implemented method is very simple + slow and needs further refinement. Nevertheless, by reducing the number of redundant terms the readability of plots, like the bubble plot, improves significantly. The function deletes all terms that have a gene overlap greater than or equal to a set threshold. The function keeps one term per group as a representative without taking into consideration the GO hierarchy.  
+
+```{r GOBubble4, warning = FALSE, message = FALSE, fig.keep = 'none', eval = FALSE}
+# Reduce redundant terms with a gene overlap >= 0.75...
+reduced_circ <- reduce_overlap(circ, overlap = 0.75)
+# ...and plot it
+GOBubble(reduced_circ, labels = 2.8)
+```
+
+![GOBubble4.](GOBubble4.png)
 
 ### Circular visualization of the results of gene- annotation enrichment analysis (GOCircle)
 The overview plots shall help to decide which of the terms are the most interesting to us. Of course, this decision depends although on the hypothesis and ideas you want to confirm with your data. Not always are the most significant terms the ones you are interested in. So, after manually selecting a set of valuable terms (EC$process) the next figure should provide us with more details on this specific terms. One of the major issues we figured out by presenting the plots was: it was sometimes difficult to interpret the information the z-score provides. Since the measure is not that common. As shown above it is simply the number of up- regulated genes minus the number of down- regulated genes divided by the square root of the count. The *GOCircle* plot emphasizes this fact.
@@ -122,7 +143,7 @@ GOCircle(circ)
 
 ![Circle plot.](GOCirc.png)
 
-The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colors can be changed with the argument *lfc.col*. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. 
+The outer circle shows a scatter plot for each term of the logFC of the assigned genes. Red circles display up- regulation and blue ones down- regulation by default. The colours can be changed with the argument *lfc.col*. Therefore, it is easier to understand, why in some cases highly significant terms have a z-score close to zero. A z-score of zero does not mean that the term is not important. At least not as long as it is significantly enriched. It just shows that the z-score is a crude measure, because obviously the score does not take into account the functional level and activation dependencies of the single genes within a process. 
 You can change the layout of the plot with various arguments, see ?GOCirlce.The *nsub* argument needs a little bit more explanation to be used wisely. First of all, it can be a numeric or a character vector. If it is a character vector then it contains the IDs or term descriptions of the processes you want to display (output not shown).
 
 ```{r GOCircle2, eval = FALSE}
@@ -164,7 +185,7 @@ chord <- chord_dat(data = circ, process = EC$process)
 ```
 
 Be aware that a pass on either *genes* or *process* might lead to a large binary matrix which results in a confusing visualization. The chart was designed for smaller subsets of high-dimensional data.
-Like the other plotting functions *GOChord* provides the user with a lot of arguments to change the layout of the plot, see ?GOChord. Most of the arguments address the adjustment of the font size of the labels, the space between them, the color scale for the logFC and the color of the ribbons. Despite the asthetics there are two other arguments: *gene.order* and *nlfc*. The first argument defines the order of the genes with the three possible options: 'logFC', 'alphabetical', 'none'. Actually the options are quite self- explanatory. Sometimes you are performing the differential expression analysis for multiple conditions and/or batches. Therefore, you want to include more than one logFC value per gene. To adjust to this situation you should use the *nlfc* argument. It is a numeric value and it defines the number of logFC columns within your binary membership matrix. The default is '1' assuming that most of the time you just have one contrast and one logFC value per gene.       
+Like the other plotting functions *GOChord* provides the user with a lot of arguments to change the layout of the plot, see ?GOChord. Most of the arguments address the adjustment of the font size of the labels, the space between them, the colour scale for the logFC and the colour of the ribbons. Despite the asthetics there are two other arguments: *gene.order* and *nlfc*. The first argument defines the order of the genes with the three possible options: 'logFC', 'alphabetical', 'none'. Actually the options are quite self- explanatory. Sometimes you are performing the differential expression analysis for multiple conditions and/or batches. Therefore, you want to include more than one logFC value per gene. To adjust to this situation you should use the *nlfc* argument. It is a numeric value and it defines the number of logFC columns within your binary membership matrix. The default is '1' assuming that most of the time you just have one contrast and one logFC value per gene.       
 
 
 ```{r GOChord3, warning = FALSE, message = FALSE, fig.keep = 'none'}
@@ -173,7 +194,33 @@ GOChord(chord, space = 0.02, gene.order = 'logFC', gene.space = 0.25, gene.size 
 ```
 ![Chord1.](GOChord1.png)
 
-The *space* argument defines the space between the colored rectangles representing the logFC. Also the font size of the gene labels (*gene.size*) and the space (*gene.space*) between them was changed. The genes were ordered according to their logFC values setting *gene.order* to 'logFC'.
+The *space* argument defines the space between the coloured rectangles representing the logFC. Also the font size of the gene labels (*gene.size*) and the space (*gene.space*) between them was changed. The genes were ordered according to their logFC values setting *gene.order* to 'logFC'.
+
+Sometimes the plot gets a bit crowded and you would like to reduce the number of displayed genes or processes. You can do this automatically by making use of the *limit* argument. Limit is a vector with two cutoff values (default = c(0, 0)). The first value defines the minimum (>=) number of terms a gene has to be assigned to. The second value determines the number of genes assigned to a selected term. For example, to display only genes which are assigned to at least three processes you would use the following line of code (output not shown):
+
+```{r GOChord4, warning = FALSE, message = FALSE, fig.keep = 'none'}
+# Display only genes which are assigned to at least three processes
+GOChord(chord, limit = c(3, 0), gene.order = 'logFC')
+```
+
+### Heatmap of genes and terms (GOHeat)
+Thanks to a very nice suggestion from *[Maureen Sartor, Ph.D.](http://sartorlab.ccmb.med.umich.edu/)* I implemented *GOHeat*. The *GOHeat* function generates a heatmap of the relationship between genes and terms similar to *GOChord*. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the colouring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the *nlfc* argument. If *nlfc = 0*, so no logFC values are available, the colouring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...
+
+```{r GOHeat1, warning = FALSE, message = FALSE, fig.keep = 'none'}
+# First, we use the chord object without logFC column to create the heatmap
+GOHeat(chord[,-8], nlfc = 0)
+```
+
+![Heat1.](GOHeat_nolfc.png)
+
+In case of *nlfc = 1* the colour corresponds to the logFC of the gene...
+
+```{r GOHeat2, warning = FALSE, message = FALSE, fig.keep = 'none'}
+# First, we use the chord object without logFC column to create the heatmap
+GOHeat(chord, nlfc = 1, fill.col = c('red', 'yellow', 'green'))
+```
+
+![Heat2.](GOHeat_lfc.png)
 
 Sometimes the plot gets a bit crowded and you would like to reduce the number of displayed genes or processes. You can do this automatically by making use of the *limit* argument. Limit is a vector with two cutoff values (default = c(0, 0)). The first value defines the minimum (>=) number of terms a gene has to be assigned to. The second value determines the number of genes assigned to a selected term. For example, to display only genes which are assigned to at least three processes you would use the following line of code (output not shown):
 
@@ -207,7 +254,7 @@ GOCluster(circ, EC$process, clust.by = 'logFC', term.width = 2)
 ```
 ![GOCluster.](GOCluster.png)
 
-Hierarchical clustering is a popular method for gene expression analysis due to its unsupervised nature assuring an unbiased result. Genes are grouped together based on their expression patterns, thus clusters are likely to contain sets of co-regulated or functionally related genes. *GOCluster* performs the hierarchical clustering of the gene expression profiles using the *hclust* method in core R. If you want to change the distance metric or the clustering algorithm use the arguments *metric* and *clust*, respectively. The resulting dendrogram is transformed with the help of *ggdendro* to be suitable for a visualization with *ggplot2*. As before a circular layout was chosen, because it is not only effective but also visually appealing. The first ring next to the dendrogram represents the logFC of the genes, which are actually the leaves of the clustering tree. In case you are interested in more than one contrast the *nlfc* argument is also available for this function. By default it is set to '1', so only one ring is drawn. Like always the logFC values are color- coded with an user- definable color scale (*lfc.col*). The next ring represents the terms assigned to the genes. For aesthetic reasons the terms should be reduced to a reasonable number with the argument *process*. The terms are color- coded as well and you can change the default colors by using the argument *term.col*. Once again, the plotting function provides you with a bunch of arguments to change the layout of the plot and you can check them out on the help page, ?GOCluster. Probably the most important argument of the function is *clust.by*. It expects a character vector specifying if the clustering should be done for gene expression pattern ('logFC', as in the figure above) or functional categories ('terms').        
+Hierarchical clustering is a popular method for gene expression analysis due to its unsupervised nature assuring an unbiased result. Genes are grouped together based on their expression patterns, thus clusters are likely to contain sets of co-regulated or functionally related genes. *GOCluster* performs the hierarchical clustering of the gene expression profiles using the *hclust* method in core R. If you want to change the distance metric or the clustering algorithm use the arguments *metric* and *clust*, respectively. The resulting dendrogram is transformed with the help of *ggdendro* to be suitable for a visualization with *ggplot2*. As before a circular layout was chosen, because it is not only effective but also visually appealing. The first ring next to the dendrogram represents the logFC of the genes, which are actually the leaves of the clustering tree. In case you are interested in more than one contrast the *nlfc* argument is also available for this function. By default it is set to '1', so only one ring is drawn. Like always the logFC values are colour- coded with an user- definable colour scale (*lfc.col*). The next ring represents the terms assigned to the genes. For aesthetic reasons the terms should be reduced to a reasonable number with the argument *process*. The terms are colour- coded as well and you can change the default colours by using the argument *term.col*. Once again, the plotting function provides you with a bunch of arguments to change the layout of the plot and you can check them out on the help page, ?GOCluster. Probably the most important argument of the function is *clust.by*. It expects a character vector specifying if the clustering should be done for gene expression pattern ('logFC', as in the figure above) or functional categories ('terms').        
 
 
 ```{r GOCluster2, warning=FALSE, eval=FALSE, message=FALSE, fig.keep='none'}

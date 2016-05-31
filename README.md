@@ -11,7 +11,7 @@ GOplot is available via CRAN: http://cran.r-project.org/web/packages/GOplot
 
 ## Available functions
 
-For preprocessing: circle_dat() and chord_dat()
+For preprocessing: circle_dat(), chord_dat() and reduce_overlap()
 
 For plotting: GOBubble(), GOBar(), GOChord(), GOCluster(), GOCircle(), GOVenn(), GOHeat()
 
