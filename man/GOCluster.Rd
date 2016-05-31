@@ -4,16 +4,10 @@
 \alias{GOCluster}
 \title{Circular dendrogram.}
 \usage{
-GOCluster(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.min,
+GOCluster(chord, process, metric, clust, clust.by, nlfc, lfc.col, lfc.min,
   lfc.max, lfc.space, lfc.width, term.col, term.space, term.width)
 }
 \arguments{
-\item{data}{A data frame which should be the result of 
-\code{\link{circle_dat}} in case the data contains only one logFC column. 
-Otherwise \code{data} is a data frame whereas the first column contains the
-genes, the second the term and the following columns the logFCs of the 
-different contrasts.}
-
 \item{process}{A character vector of selected processes (ID or term
 description)}
 
@@ -47,6 +41,12 @@ for the logFC}
 \item{term.space}{The space between the logFC ring and the term ring}
 
 \item{term.width}{The width of the term ring}
+
+\item{data}{A data frame which should be the result of 
+\code{\link{circle_dat}} in case the data contains only one logFC column. 
+Otherwise \code{data} is a data frame whereas the first column contains the
+genes, the second the term and the following columns the logFCs of the 
+different contrasts.}
 }
 \description{
 GOCluster generates a circular dendrogram of the \code{data} 
