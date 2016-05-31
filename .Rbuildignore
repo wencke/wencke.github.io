@@ -1,0 +1,10 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^NEWS\.md$
+^\.travis\.yml$
+^\.index\.html$
+^\.styles\.css$
+
+
+
+
