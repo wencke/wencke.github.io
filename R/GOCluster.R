@@ -54,7 +54,7 @@
 #' @export
 #' 
 
-GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.min, lfc.max, lfc.space, lfc.width, term.col, term.space, term.width){
+GOCluster<-function(chord, process, metric, clust, clust.by, nlfc, lfc.col, lfc.min, lfc.max, lfc.space, lfc.width, term.col, term.space, term.width){
   x <- y <- xend <- yend <- width <- space <- logFC <- NULL
   if (missing(metric)) metric<-'euclidean'
   if (missing(clust)) clust<-'average'
@@ -63,16 +63,16 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   if (missing(lfc.col)) lfc.col<-c('firebrick1','white','dodgerblue')
   if (missing(lfc.min)) lfc.min <- -3
   if (missing(lfc.max)) lfc.max <- 3
-  if (missing(lfc.space)) lfc.space<- (-0.5) else lfc.space<-lfc.space*(-1)
-  if (missing(lfc.width)) lfc.width<- (-1.6) else lfc.width<-lfc.space-lfc.width-0.1
-  if (missing(term.col)) term.col<-brewer.pal(length(process), 'Set3')
-  if (missing(term.space)) term.space<- lfc.space+lfc.width else term.space<-term.space*(-1)+lfc.width
-  if (missing(term.width)) term.width<- 2*lfc.width+term.space else term.width<-term.width*(-1)+term.space
+  if (missing(lfc.space)) lfc.space <- (-0.5) else lfc.space <- lfc.space*(-1)
+  if (missing(lfc.width)) lfc.width <- (-1.6) else lfc.width <- lfc.space-lfc.width-0.1
+  if (missing(term.col)) term.col <- brewer.pal(length(process), 'Set3')
+  if (missing(term.space)) term.space <- lfc.space + lfc.width else term.space <- term.space*(-1)
+  if (missing(term.width)) term.width <- lfc.width + term.space else term.width <- term.width*(-1)+term.space
   
 
-  if (clust.by=='logFC') distance <- stats::dist(chord[,dim(chord)[2]], method=metric)
-  if (clust.by=='term') distance <- stats::dist(chord, method=metric)
-  cluster <- stats::hclust(distance, method=clust)
+  if (clust.by == 'logFC') distance <- stats::dist(chord[,dim(chord)[2]], method=metric)
+  if (clust.by == 'term') distance <- stats::dist(chord, method=metric)
+  cluster <- stats::hclust(distance ,method=clust)
   dendr <- dendro_data(cluster)
   y_range <- range(dendr$segments$y)
   x_pos <- data.frame(x=dendr$label$x, label=as.character(dendr$label$label))
@@ -80,14 +80,12 @@ GOCluster<-function(data, process, metric, clust, clust.by, nlfc, lfc.col, lfc.m
   chord$label <- as.character(rownames(chord))
   all <- merge(x_pos, chord, by='label')
   all$label <- as.character(all$label)
-  if (nlfc){
-    lfc_rect <- all[,c(2, dim(all)[2])]
-    for (l in 4:dim(data)[2]) lfc_rect <- cbind(lfc_rect, sapply(all$label, function(x) data[match(x, data$genes), l]))
-    num <- dim(data)[2]-1
+  if (nlfc != 0){
+    num <- ncol(all)-2-nlfc
     tmp <- seq(lfc.space, lfc.width, length = num)
-    lfc<-data.frame(x=numeric(),width=numeric(),space=numeric(),logFC=numeric())
-    for (l in 1:(length(tmp)-1)){
-      tmp_df<-data.frame(x=lfc_rect[,1],width=tmp[l+1],space=tmp[l],logFC=lfc_rect[,l+1])
+    lfc <- data.frame(x=numeric(),width=numeric(),space=numeric(),logFC=numeric())
+    for (l in 1:nlfc){
+      tmp_df <- data.frame(x = all$x, width=tmp[l+1], space = tmp[l], logFC = all[,ncol(all)-nlfc+l])
       lfc<-rbind(lfc,tmp_df)
     }
   }else{

@@ -1,5 +1,5 @@
 ---
-title: "GOplot 1.0"
+title: "GOplot 1.1"
 author: "Fatima Sanchez Cabo & Wencke Walter"
 date: "`r Sys.Date()`"
 output: 
@@ -174,6 +174,30 @@ GOChord(chord, space = 0.02, gene.order = 'logFC', gene.space = 0.25, gene.size 
 ![Chord1.](GOChord1.png)
 
 The *space* argument defines the space between the colored rectangles representing the logFC. Also the font size of the gene labels (*gene.size*) and the space (*gene.space*) between them was changed. The genes were ordered according to their logFC values setting *gene.order* to 'logFC'.
+
+Sometimes the plot gets a bit crowded and you would like to reduce the number of displayed genes or processes. You can do this automatically by making use of the *limit* argument. Limit is a vector with two cutoff values (default = c(0, 0)). The first value defines the minimum (>=) number of terms a gene has to be assigned to. The second value determines the number of genes assigned to a selected term. For example, to display only genes which are assigned to at least three processes you would use the following line of code (output not shown):
+
+```{r GOChord4, warning=FALSE, message=FALSE, fig.keep='none'}
+# Display only genes which are assigned to at least three processe
+GOChord(chord, limit = c(3,0), gene.order = 'logFC')
+```
+
+### Heatmap of genes and terms (GOHeat)
+Inspired by *[Maureen Sartor, Ph.D.](http://sartorlab.ccmb.med.umich.edu/)*, the GOHeat function generates a heatmap of the relationship between genes and terms similar to *GOChord*. Biological processes are displayed in rows and genes in columns. Each column is divided into smaller rectangles and the coloring of the tiles depends on the presence or abscence of logFC values. In addition genes are clustered to highlight groups of genes with similar annotated functions. Basically the function has two modes depending on the *nlfc* argument. If *nlfc = 0*, so no logFC values are available, the coloring encodes for the overall number of processes the respective gene is assigned to. Let's have a look at an example...
+
+```{r GOHeat1, warning=FALSE, message=FALSE, fig.keep ='none'}
+# Use the chord object without logFC column to create the heatmap
+GOHeat(chord[,-8], nlfc = 0)
+```
+![GOHeart1.](GOHeat_nolfc.png)
+
+In case of *nlfc = 1* the color corresponds to the logFC of the gene...
+
+```{r GOHeat2, warning=FALSE, message=FALSE, fig.keep='none'}
+# Now create the heatmap with logFC values and user-defined color
+GOHeat(chord, nlfc = 1, fill.col = c('red','yellow','green'))
+```
+![GOHeart2.](GOHeat_lfc.png)
 
 ### Golden eye (GOCluster)
 The idea behind the *GOCluster* function is to visualize as much information as possible. Here is an example:

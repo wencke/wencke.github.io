@@ -119,10 +119,10 @@ chord_dat <- function(data, genes, process){
 
   colnames(data) <- tolower(colnames(data))
   if (missing(genes)){
-    if (is.null(data$logFC)){
+    if (is.null(data$logfc)){
       genes <- as.character(unique(data$genes))
     }else{
-      genes <- subset(data, !duplicated(genes), c(genes, logFC))
+      genes <- subset(data, !duplicated(genes), c(genes, logfc))
     }
   }else{
     if(is.vector(genes)){
