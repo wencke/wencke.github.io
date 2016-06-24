@@ -58,9 +58,9 @@ GOHeat <- function(data, nlfc, fill.col){
                    lab = rep(rownames(data), each = nterm))
   df_o <- df[order(df$x),]
   
-  g <- ggplot() + 
-        geom_tile(data = df_o, aes(x = x, y = y, fill = z))+
-        scale_x_discrete(breaks = 1:length(unique(df_o$x)), labels = unique(df_o$lab)) +
+  g <- ggplot(df_o, aes(x = x, y = y)) + 
+        geom_tile(aes(fill = z))+
+        scale_x_continuous(breaks = 1:length(unique(df_o$x)), labels = as.character(unique(df_o$lab))) +
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5), axis.title.x=element_blank(), axis.title.y=element_blank(),
               axis.text.y = element_text(size = 14), panel.background=element_blank(), panel.grid.major=element_blank(),
               panel.grid.minor=element_blank())
