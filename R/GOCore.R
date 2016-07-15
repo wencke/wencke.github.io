@@ -349,6 +349,7 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
 #' @param title The title of the plot
 #' @param zsc.col Character vector to define the colour scale for the z-score of 
 #'   the form c(high, midpoint,low)
+#' @param label.size Defines the font size of x-axis text labels.
 #' @details If \code{display} is used to facet the plot the width of the panels 
 #'   will be proportional to the length of the x scale.
 #' @import ggplot2
@@ -370,10 +371,11 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
 #' }
 #' @export
 
-GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
+GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size){
   id <- adj_pval <- zscore <- NULL
   if (missing(display)) display <- 'single'
   if (missing(title)) title <- ''
+  if (missing(label.size)) label.size <- 14
   if (missing(zsc.col)) zsc.col <- c('firebrick1', 'white', 'dodgerblue1')
   colnames(data) <- tolower(colnames(data))
   data$adj_pval <- -log(data$adj_pval, 10)
@@ -399,13 +401,13 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
       leg
   }
   if (display == 'single'){
-    g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
-              axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+    g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = label.size), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
+              axis.title = element_text(size = 14, face = 'bold'), axis.text.y = element_text(size = 14), panel.background = element_blank(), 
               panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())        
   }else{
     g + facet_grid(.~category, space = 'free_x', scales = 'free_x')+
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
-            axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = label.size), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
+            axis.title = element_text(size = 14, face = 'bold'), axis.text.y = element_text(size = 14), panel.background = element_blank(), 
             panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())
   }
 }
