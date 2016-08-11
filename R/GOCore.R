@@ -490,8 +490,10 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   }else{
     if (strsplit(nsub[1], ':')[[1]][1] == 'GO'){
       suby <- suby[suby$ID%in%nsub, ]
+      tmp <- subset(data, ID %in% nsub)
     }else{
       suby <- suby[suby$term%in%nsub, ]
+      tmp <- subset(data, term %in% nsub)
     }
     nsub <- length(nsub)}
   N <- dim(suby)[1]
@@ -501,20 +503,20 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
     val <- (suby$adj_pval[i] - r_pval[1]) / (r_pval[2] - r_pval[1])
     ymax <- c(ymax, val)}
   df <- data.frame(x = seq(0, 10 - (10 / N), length = N), xmax = rep(10 / N - 0.2, N), y1 = rep(rad1, N), y2 = rep(rad2, N), ymax = ymax, zscore = suby$zscore, ID = suby$ID)
-  scount <- data[!duplicated(data$term), which(colnames(data) == 'count')][1:nsub]
-  idx_term <- which(!duplicated(data$term) == T)
+  scount <- suby$count
+  idx_term <- which(!duplicated(tmp$term) == T)
   xm <- c(); logs <- c()
   for (sc in 1:length(scount)){
     idx <- c(idx_term[sc], idx_term[sc] + scount[sc] -1)
     val <- stats::runif(scount[sc], df$x[sc] + 0.06, (df$x[sc] + df$xmax[sc] - 0.06))
     xm <- c(xm, val)
-    r_logFC <- round(range(data$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
+    r_logFC <- round(range(tmp$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
     for (lfc in idx[1]:idx[2]){
-      val <- (data$logFC[lfc] - r_logFC[1]) / (r_logFC[2] - r_logFC[1])
+      val <- (tmp$logFC[lfc] - r_logFC[1]) / (r_logFC[2] - r_logFC[1])
       logs <- c(logs, val)}
   }
   cols <- c()
-  for (ys in 1:length(logs)) cols <- c(cols, ifelse(data$logFC[ys] > 0, 'upregulated', 'downregulated'))
+  for (ys in 1:length(logs)) cols <- c(cols, ifelse(tmp$logFC[ys] > 0, 'upregulated', 'downregulated'))
   dfp <- data.frame(logx = xm, logy = logs, logFC = factor(cols), logy2 = rep(rad2, length(logs)))
   c <-	ggplot()+
     geom_rect(data = df, aes(xmin = x, xmax = x + xmax, ymin = y1, ymax = y1 + ymax, fill = zscore), colour = 'black') +
