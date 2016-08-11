@@ -371,7 +371,7 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
 #' }
 #' @export
 
-GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size){
+GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size, scale.title){
   id <- adj_pval <- zscore <- NULL
   if (missing(display)) display <- 'single'
   if (missing(title)) title <- ''
@@ -382,21 +382,23 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size
   sub <- data[!duplicated(data$term), ]
 
   if (order.by.zscore == T) {
+    if(missing(scale.title)) scale.title <- 'z-score'
     sub <- sub[order(sub$zscore, decreasing = T), ]
     leg <- theme(legend.position = 'bottom')
     g <-  ggplot(sub, aes(x = factor(id, levels = stats::reorder(id, adj_pval)), y = adj_pval, fill = zscore)) +
       geom_bar(stat = 'identity', colour = 'black') +
-      scale_fill_gradient2('z-score', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), 
+      scale_fill_gradient2(scale.title, space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(sub$zscore), max(sub$zscore)), labels = c('decreasing', 'increasing')) +
       labs(title = title, x = '', y = '-log (adj p-value)') +
       leg
   }else{
+    if(missing(scale.title)) scale.title <- 'Significance'
     sub <- sub[order(sub$adj_pval, decreasing = T), ]
     leg <- theme(legend.justification = c(1, 1), legend.position = c(0.98, 0.995), legend.background = element_rect(fill = 'transparent'),
                  legend.box = 'vertical', legend.direction = 'horizontal')
     g <-  ggplot(sub, aes( x = factor(id, levels = reorder(id, adj_pval)), y = zscore, fill = adj_pval)) +
       geom_bar(stat = 'identity', colour = 'black') +
-      scale_fill_gradient2('Significance', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
+      scale_fill_gradient2(scale.title, space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
       labs(title = title, x = '', y = 'z-score') +
       leg
   }
