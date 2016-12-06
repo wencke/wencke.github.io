@@ -355,6 +355,7 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
 #' @param title The title of the plot
 #' @param zsc.col Character vector to define the colour scale for the z-score of 
 #'   the form c(high, midpoint,low)
+#' @param label.size Defines the font size of x-axis text labels.
 #' @details If \code{display} is used to facet the plot the width of the panels 
 #'   will be proportional to the length of the x scale.
 #' @import ggplot2
@@ -376,42 +377,45 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
 #' }
 #' @export
 
-GOBar <- function(data, display, order.by.zscore = T, title, zsc.col){
+GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size, scale.title){
   id <- adj_pval <- zscore <- NULL
   if (missing(display)) display <- 'single'
   if (missing(title)) title <- ''
+  if (missing(label.size)) label.size <- 14
   if (missing(zsc.col)) zsc.col <- c('firebrick1', 'white', 'dodgerblue1')
   colnames(data) <- tolower(colnames(data))
   data$adj_pval <- -log(data$adj_pval, 10)
   sub <- data[!duplicated(data$term), ]
 
   if (order.by.zscore == T) {
+    if(missing(scale.title)) scale.title <- 'z-score'
     sub <- sub[order(sub$zscore, decreasing = T), ]
     leg <- theme(legend.position = 'bottom')
     g <-  ggplot(sub, aes(x = factor(id, levels = stats::reorder(id, adj_pval)), y = adj_pval, fill = zscore)) +
       geom_bar(stat = 'identity', colour = 'black') +
-      scale_fill_gradient2('z-score', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), 
+      scale_fill_gradient2(scale.title, space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(sub$zscore), max(sub$zscore)), labels = c('decreasing', 'increasing')) +
       labs(title = title, x = '', y = '-log (adj p-value)') +
       leg
   }else{
+    if(missing(scale.title)) scale.title <- 'Significance'
     sub <- sub[order(sub$adj_pval, decreasing = T), ]
     leg <- theme(legend.justification = c(1, 1), legend.position = c(0.98, 0.995), legend.background = element_rect(fill = 'transparent'),
                  legend.box = 'vertical', legend.direction = 'horizontal')
     g <-  ggplot(sub, aes( x = factor(id, levels = reorder(id, adj_pval)), y = zscore, fill = adj_pval)) +
       geom_bar(stat = 'identity', colour = 'black') +
-      scale_fill_gradient2('Significance', space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
+      scale_fill_gradient2(scale.title, space = 'Lab', low = zsc.col[3], mid = zsc.col[2], high = zsc.col[1], guide = guide_colourbar(title.position = "top", title.hjust = 0.5), breaks = c(min(sub$adj_pval), max(sub$adj_pval)), labels = c('low', 'high')) +
       labs(title = title, x = '', y = 'z-score') +
       leg
   }
   if (display == 'single'){
-    g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
-              axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+    g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = label.size), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
+              axis.title = element_text(size = 14, face = 'bold'), axis.text.y = element_text(size = 14), panel.background = element_blank(), 
               panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())        
   }else{
     g + facet_grid(.~category, space = 'free_x', scales = 'free_x')+
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
-            axis.title = element_text(size = 14, face = 'bold'), axis.text = element_text(size = 14), panel.background = element_blank(), 
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = label.size), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'),
+            axis.title = element_text(size = 14, face = 'bold'), axis.text.y = element_text(size = 14), panel.background = element_blank(), 
             panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())
   }
 }
@@ -494,8 +498,10 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   }else{
     if (strsplit(nsub[1], ':')[[1]][1] == 'GO'){
       suby <- suby[suby$ID%in%nsub, ]
+      tmp <- subset(data, ID %in% nsub)
     }else{
       suby <- suby[suby$term%in%nsub, ]
+      tmp <- subset(data, term %in% nsub)
     }
     nsub <- length(nsub)}
   N <- dim(suby)[1]
@@ -505,20 +511,20 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
     val <- (suby$adj_pval[i] - r_pval[1]) / (r_pval[2] - r_pval[1])
     ymax <- c(ymax, val)}
   df <- data.frame(x = seq(0, 10 - (10 / N), length = N), xmax = rep(10 / N - 0.2, N), y1 = rep(rad1, N), y2 = rep(rad2, N), ymax = ymax, zscore = suby$zscore, ID = suby$ID)
-  scount <- data[!duplicated(data$term), which(colnames(data) == 'count')][1:nsub]
-  idx_term <- which(!duplicated(data$term) == T)
+  scount <- suby$count
+  idx_term <- which(!duplicated(tmp$term) == T)
   xm <- c(); logs <- c()
   for (sc in 1:length(scount)){
     idx <- c(idx_term[sc], idx_term[sc] + scount[sc] -1)
     val <- stats::runif(scount[sc], df$x[sc] + 0.06, (df$x[sc] + df$xmax[sc] - 0.06))
     xm <- c(xm, val)
-    r_logFC <- round(range(data$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
+    r_logFC <- round(range(tmp$logFC[idx[1]:idx[2]]), 0) + c(-1, 1)
     for (lfc in idx[1]:idx[2]){
-      val <- (data$logFC[lfc] - r_logFC[1]) / (r_logFC[2] - r_logFC[1])
+      val <- (tmp$logFC[lfc] - r_logFC[1]) / (r_logFC[2] - r_logFC[1])
       logs <- c(logs, val)}
   }
   cols <- c()
-  for (ys in 1:length(logs)) cols <- c(cols, ifelse(data$logFC[ys] > 0, 'upregulated', 'downregulated'))
+  for (ys in 1:length(logs)) cols <- c(cols, ifelse(tmp$logFC[ys] > 0, 'upregulated', 'downregulated'))
   dfp <- data.frame(logx = xm, logy = logs, logFC = factor(cols), logy2 = rep(rad2, length(logs)))
   c <-	ggplot()+
     geom_rect(data = df, aes(xmin = x, xmax = x + xmax, ymin = y1, ymax = y1 + ymax, fill = zscore), colour = 'black') +

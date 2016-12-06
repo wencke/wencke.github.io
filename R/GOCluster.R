@@ -197,11 +197,12 @@ GOCluster<-function(chord, process, metric, clust, clust.by, nlfc, lfc.col, lfc.
 #' }
 #' @export
 
-GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc = 1, lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label, limit){
+GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc = 1, lfc.col, lfc.min, lfc.max, ribbon.col, border.size, process.label, limit, scale.title){
   y <- id <- xpro <- ypro <- xgen <- ygen <- lx <- ly <- ID <- logFC <- NULL
   Ncol <- dim(data)[2]
   
   if (missing(title)) title <- ''
+  if (missing(scale.title)) scale.title <- 'logFC'
   if (missing(space)) space = 0
   if (missing(gene.order)) gene.order <- 'none'
   if (missing(gene.size)) gene.size <- 3
@@ -320,7 +321,7 @@ GOChord <- function(data, title, space, gene.order, gene.size, gene.space, nlfc 
   
   if (nlfc >= 1){
     g + geom_polygon(data = df_genes, aes(x, y, group = id, fill = logFC), inherit.aes = F, color = 'black') +
-      scale_fill_gradient2('logFC', space = 'Lab', low = lfc.col[3], mid = lfc.col[2], high = lfc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
+      scale_fill_gradient2(scale.title, space = 'Lab', low = lfc.col[3], mid = lfc.col[2], high = lfc.col[1], guide = guide_colorbar(title.position = "top", title.hjust = 0.5), 
                            breaks = c(min(df_genes$logFC), max(df_genes$logFC)), labels = c(round(min(df_genes$logFC)), round(max(df_genes$logFC)))) +
       theme(legend.position = 'bottom', legend.background = element_rect(fill = 'transparent'), legend.box = 'horizontal', legend.direction = 'horizontal')
   }else{

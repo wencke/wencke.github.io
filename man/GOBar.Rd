@@ -4,7 +4,7 @@
 \alias{GOBar}
 \title{Z-score coloured barplot.}
 \usage{
-GOBar(data, display, order.by.zscore = T, title, zsc.col)
+GOBar(data, display, order.by.zscore = T, title, zsc.col, label.size)
 }
 \arguments{
 \item{data}{A data frame containing at least the term ID and/or term, the 
@@ -23,6 +23,8 @@ ordered by the negative logarithm of the adjusted p-value}
 
 \item{zsc.col}{Character vector to define the colour scale for the z-score of 
 the form c(high, midpoint,low)}
+
+\item{label.size}{Defines the font size of x-axis text labels.}
 }
 \description{
 Z-score coloured barplot of terms ordered alternatively by 
