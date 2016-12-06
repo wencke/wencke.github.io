@@ -9,13 +9,14 @@ theme_blank <- theme(axis.line = element_blank(), axis.text.x = element_blank(),
                      panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.background = element_blank())
 
 # Draw adjacent table for GOBubble and GOCircle
-draw_table <- function(data, col){
+draw_table <- function(data, par.order){
   id <- term <- NULL
   colnames(data) <- tolower(colnames(data))
-  if (missing(col)){
+  if (missing(par.order)){
     tt1 <- ttheme_default()
   }else{
-    text.col <- c(rep(col[1], sum(data$category == 'BP')), rep(col[2], sum(data$category == 'CC')), rep(col[3], sum(data$category == 'MF')))
+    text.col <- c(rep(par.order$cols[1], sum(data$category == par.order$cat.abb[1])), rep(par.order$cols[2], sum(data$category == par.order$cat.abb[2])), 
+                  rep(par.order$cols[3], sum(data$category == par.order$cat.abb[3])))
     tt1 <- ttheme_minimal(
       core = list(bg_params = list(fill = text.col, col=NA, alpha= 1/3)), 
       colhead = list(fg_params = list(col = "black")))
