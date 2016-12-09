@@ -279,6 +279,12 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
   if (bg.col == T & display == 'single') cat("Parameter bg.col will be ignored. To use the parameter change display to 'multiple'")
   
   colnames(data) <- tolower(colnames(data))
+  tmp_lab <- data.frame(cats = c('Biological Process', 'Cellular Component', 'Molecular Function'), 
+                        cat.abb = c('BP', 'CC', 'MF'),
+                        locy = c(match('BP', data$category), match('CC', data$category), match('MF', data$category)),
+                        cols = cols,
+                        stringsAsFactors = F)
+  tmp_lab <- tmp_lab[order(tmp_lab$locy),]
   if(!'count'%in%colnames(data)){
     rang <- c(5, 5)
     data$count <- rep(1, dim(data)[1])
@@ -292,12 +298,12 @@ GOBubble <- function(data, display, title, colour, labels, ID = T, table.legend 
     scale_size(range = rang, guide = 'none')
   if (!is.character(labels)) sub2 <- subset(sub, subset = sub$adj_pval >= labels) else sub2 <- subset(sub, sub$id%in%labels | sub$term%in%labels)
   if (display == 'single'){
-    g <- g + scale_fill_manual('Category', values = cols, labels = c('Biological Process', 'Cellular Component', 'Molecular Function'))+
+    g <- g + scale_fill_manual('Category', values = tmp_lab$cols, labels = tmp_lab$cats)+
       theme(legend.position = 'bottom')+
       annotate ("text", x = min(sub$zscore)+0.2, y = 1.4, label = "Threshold", colour = "orange", size = 4)
     if (ID) g <- g+ geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = id), size = 5) else g <- g + geom_text(data = sub2, aes(x = zscore, y = adj_pval, label = term), size = 4)
     if (table.legend){
-      if (table.col) table <- draw_table(sub2, col = cols) else table <- draw_table(sub2)
+      if (table.col) table <- draw_table(sub2, par.order = tmp_lab) else table <- draw_table(sub2)
       g <- g + theme(axis.text = element_text(size = 14), axis.line = element_line(colour = 'grey80'), axis.ticks = element_line(colour = 'grey80'), 
                      axis.title = element_text(size = 14, face = 'bold'), panel.background = element_blank(), panel.grid.minor = element_blank(), 
                      panel.grid.major = element_line(colour = 'grey80'), plot.background = element_blank()) 
