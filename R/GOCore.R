@@ -477,7 +477,7 @@ GOBar <- function(data, display, order.by.zscore = T, title, zsc.col, label.size
 GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, lfc.col, label.size, label.fontface){
   xmax <- y1<- zscore <- y2 <- ID <- logx <- logy2 <- logy <- logFC <- NULL
   if (missing(title)) title <- ''
-  if (missing(nsub)) if (dim(data)[1] > 10) nsub <- 10 else nsub <- dim(data)[1]
+  if (missing(nsub)) nsub <- ifelse(length(unique(data$term)) > 10, 10, length(unique(data$term)))
   if (missing(rad1)) rad1 <- 2
   if (missing(rad2)) rad2 <- 3
   if (missing(zsc.col)) zsc.col <- c('red', 'white', 'blue')
@@ -487,8 +487,9 @@ GOCircle <- function(data, title, nsub, rad1, rad2, table.legend = T, zsc.col, l
   
   data$adj_pval <- -log(data$adj_pval, 10)
   suby <- data[!duplicated(data$term), ]
-  if (is.numeric(nsub) == T){		
+  if (is.numeric(nsub)){		
     suby <- suby[1:nsub, ]
+    tmp <- subset(data, ID %in% suby$ID)
   }else{
     if (strsplit(nsub[1], ':')[[1]][1] == 'GO'){
       suby <- suby[suby$ID%in%nsub, ]
